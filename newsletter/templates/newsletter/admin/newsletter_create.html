@@ -1,0 +1,168 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Create Newsletter{% endblock title %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Create Newsletter</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'newsletter:newsletter_list' %}">Newsletters</a></li>
+              <li class="breadcrumb-item active">Create Newsletter</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+     <br>
+ 
+     <!-- Main content -->
+     <section class="content">
+       <div class="container-fluid justify-content-center">
+         <div class="row justify-content-center align-middle">
+           <div class="col-md-8 align-self-center">
+ 
+             <!-- /.card -->
+            <div class="card card-info">
+               <div class="card-header">
+                 <h3 class="card-title">Create New Newsletter</h3>
+               </div>
+               <!-- /.card-header -->
+               <!-- form start -->
+               <form class="form-horizontal" id="newsletter_form" method="POST">
+                    {% csrf_token %}
+                 <div class="card-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter subject">
+                    <small id="subject_error" style="display: none;color: red;"></small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Greeting <small> (do not write name or sir/madam)</small></label>
+                    <input type="text" class="form-control" id="greeting" name="greeting" placeholder="Enter greeting">
+                    <small id="greeting_error" style="display: none;color: red;"></small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Body <small> (This email will be sent to your selected category contacts)</small></label>
+                    <textarea rows="6" type="text" class="form-control" id="description" name="description" placeholder="Write Something"></textarea>
+                    <small id="description_error" style="display: none;color: red;"></small>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Category</label>
+                    <select id="newsletter_type" name="newsletter_type" data-placeholder="Select Category"
+                            style="width: 100%;">
+                      <option value="all" selected>All</option>
+                      {% for type in types %}
+                      <option value="{{ type.id }}">
+                        {{ type }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                    <small id="newsletter_type_error" style="display: none;color: red;"></small>
+                  </div>
+
+
+                   {% if messages %}
+                   {% for message in messages %}
+                         {% if message.tags  == 'error' %}
+                        <div class="form-group row">
+                         <label for="" class="col-sm-2 col-form-label"></label>
+                         <div class="col-sm-10">
+                              <label style="color: red;">{{ message }}</label>
+                         </div>
+                       </div>
+                        {% else %}
+                        <div class="form-group row">
+                         <label for="" class="col-sm-2 col-form-label"></label>
+                         <div class="col-sm-10">
+                              <label style="color: black;">{{ message }}</label>
+                         </div>
+                       </div>
+                        {% endif %}
+              
+                   {% endfor %}
+                   {% endif %}
+                 </div>
+                 <!-- /.card-body -->
+                 <div class="card-footer">
+                   <a href="{% url 'newsletter:newsletter_list' %}" class="btn btn-outline-secondary float-left" >Back</a> 
+                  <button type="submit" id="newsletter_form_button" class="btn btn-info float-right">Submit</button> 
+                 </div>
+                 <!-- /.card-footer -->
+               </form>
+             </div>
+             <!-- /.card -->
+           </div>
+           <!-- /.col -->
+         </div>
+         <!-- /.row -->
+       </div>
+       <!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block script %}
+<script>
+var isError = false;
+  $('#newsletter_form_button').click(function() {
+    $('#newsletter_form').on('submit', function(e) {
+      console.log('this is working');
+      console.log('this is 444');
+      $('#newsletter_form_button').prop('disabled', 'true')
+      $('#newsletter_form_button').html('<div class="spinner-border" role="status"></div>')
+
+      if($('#subject').val().trim() === '' || $('#subject').val().trim() == null) {
+          setErrorJQuery($('#subject'), $('#subject_error'), 'Subject field is required')
+      }
+
+      if($('#greeting').val().trim() === '' || $('#greeting').val().trim() == null) {
+          setErrorJQuery($('#greeting'), $('#greeting_error'), 'Greeting field is required')
+      }
+
+      if($('#description').val().trim() === '' || $('#description').val().trim() == null) {
+          setErrorJQuery($('#description'), $('#description_error'), 'Description field is required')
+      }
+
+      if (isError) { 
+        $('#newsletter_form_button').removeAttr('disabled')
+        $('#newsletter_form_button').html('Submit')
+            console.log('yes there is error');
+            isError = false;
+            e.preventDefault();
+      }
+    })
+  })
+
+  function setErrorJQuery(inputField, errorArea, errorMessage) {
+     console.log('shit there is error ')
+     isError = true
+     inputField.css('border', 'dashed 2px red')
+     errorArea.text(errorMessage)
+    errorArea.css('display', 'block')
+   }
+
+
+
+  $(function () {
+   
+   //Initialize Select2 Elements
+   $('#newsletter_type').select2({
+     theme: 'bootstrap4'
+   });
+ })
+</script>
+{% endblock script %}

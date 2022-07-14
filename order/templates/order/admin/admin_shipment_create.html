@@ -1,0 +1,122 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Shipment{% endblock title %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Create Shipment</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'order:admin_shipment_list' %}">Shipments</a></li>
+              <li class="breadcrumb-item active">Create Shipment</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+     <br>
+     <br>
+     <br>
+ 
+     <!-- Main content -->
+     <section class="content">
+       <div class="container-fluid justify-content-center">
+         <div class="row justify-content-center align-middle">
+           <div class="col-md-6 align-self-center">
+ 
+             <!-- /.card -->
+            <div class="card card-info">
+               <div class="card-header">
+                 <h3 class="card-title">Create New Shipment</h3>
+               </div>
+               <!-- /.card-header -->
+               <!-- form start -->
+               <form class="form-horizontal" id="shipment_form" method="POST">
+                    {% csrf_token %}
+                 <div class="card-body">
+                   <div class="form-group row">
+                     <label for="" class="col-sm-2 col-form-label">Region *</label>
+                     <div class="col-sm-10">
+                       <input type="text" required class="form-control" name="region" placeholder="Enter Region">
+                     </div>
+                   </div>
+                   <div class="form-group row">
+                    <label for="" class="col-sm-2 col-form-label">Shipment Comment</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" name="shipment_comment" placeholder="Enter Shipment Comment">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                   <label for="" class="col-sm-2 col-form-label">Shipment Fee *</label>
+                   <div class="col-sm-10">
+                     <input type="number" required class="form-control" name="shipment_fee" placeholder="Enter Shipment Fee">
+                   </div>
+                 </div>
+                 <div class="form-group row">
+                    <label for="" class="col-sm-2 col-form-label">Free Shipment Limit</label>
+                    <div class="col-sm-10">
+                      <input type="number" class="form-control" name="free_shipment_limit" placeholder="Enter Free Shipment Limit">
+                    </div>
+                  </div>
+                   <div class="form-group row">
+                     <div class="offset-sm-2 col-sm-10">
+                       <div class="form-check">
+                         <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
+                         <label class="form-check-label" for="exampleCheck2">Active</label>
+                       </div>
+                     </div>
+                   </div>
+
+                   {% if messages %}
+                   {% for message in messages %}
+                         {% if message.tags  == 'error' %}
+                        <div class="form-group row">
+                         <label for="" class="col-sm-2 col-form-label"></label>
+                         <div class="col-sm-10">
+                              <label style="color: red;">{{ message }}</label>
+                         </div>
+                       </div>
+                        {% else %}
+                        <div class="form-group row">
+                         <label for="" class="col-sm-2 col-form-label"></label>
+                         <div class="col-sm-10">
+                              <label style="color: black;">{{ message }}</label>
+                         </div>
+                       </div>
+                        {% endif %}
+              
+                   {% endfor %}
+                   {% endif %}
+                 </div>
+                 <!-- /.card-body -->
+                 <div class="card-footer">
+                   <a href="{% url 'order:admin_shipment_list' %}" class="btn btn-outline-secondary float-left" >Back</a> 
+                  <button type="submit" class="btn btn-info float-right">Submit</button> 
+                 </div>
+                 <!-- /.card-footer -->
+               </form>
+             </div>
+             <!-- /.card -->
+           </div>
+           <!-- /.col -->
+         </div>
+         <!-- /.row -->
+       </div>
+       <!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block script %}
+
+{% endblock script %}

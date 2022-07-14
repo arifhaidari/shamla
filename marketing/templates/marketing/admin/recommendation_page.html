@@ -1,0 +1,149 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Recommendation{% endblock title %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Recommendation Info</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'account:profile' %}">Dashboard</a></li>
+              <li class="breadcrumb-item active">Recommendation Info</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+ 
+     <!-- Main content -->
+    <section class="content">
+     <div class="container-fluid">
+
+      <!-- SELECT2 EXAMPLE -->
+      <div class="card card-default">
+        <form method="POST" enctype="multipart/form-data" id="product_form" name="product_form">
+        {% csrf_token %}
+        <div class="card-header">
+          <h3 class="card-title">Upate Recommendation Info</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- general form elements -->
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">New Arrival Info</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Time Interval * <small>(Three month is selected by default)</small></label>
+                    <input type="date" class="form-control" value="{% if new_arrival.time_interval %}{{ new_arrival.time_interval|striptags }}{% endif %}" id="time_interval" name="time_interval" placeholder="Enter Title">
+                    <small id="title_error" style="display: none;color: red;"></small>
+                  </div>
+                  <input type="hidden" name="new_arrival_id" value="{% if new_arrival.id %}{{new_arrival.id}}{% endif %}">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Item Number * <small>(Not More Than 30 Items)</small></label>
+                    <input type="number" max="30" min="1" class="form-control" id="new_arrival_item_number" value="{% if new_arrival.time_interval %}{{ new_arrival.item_number }}{% endif %}" name="new_arrival_item_number" placeholder="Enter Item Number">
+                    <small id="new_arrival_item_number_error" style="display: none;color: red;"></small>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-6">
+               <!-- general form elements -->
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Recommendation Info</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Category * <small>(Only Three Categories Will Be Considered)</small></label>
+                    <select id="the_category_select" name="the_category_select" multiple="multiple" data-placeholder="Select Category"
+                            style="width: 100%;">
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category in recommendation.category.all %}selected{% endif %}>
+                              {{ category }}
+                            </option>
+                      </option>
+                      {% endfor %}
+                    </select>
+                    <small id="the_category_select_error" style="display: none;color: red;"></small>
+                  </div>
+                  <input type="hidden" name="recommendation_id" value="{% if recommendation.id %}{{recommendation.id}}{% endif %}">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Item Number * <small>(No More Than 30 Items)</small></label>
+                    <input type="number" max="30" min="1" class="form-control" id="recommend_item_number" value="{% if recommendation.item_number %}{{ recommendation.item_number }}{% endif %}" name="recommend_item_number" placeholder="Enter Item Number">
+                    <small id="recommend_item_number_error" style="display: none;color: red;"></small>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.card-body -->
+
+        
+          
+        
+         
+        <div class="card-footer">
+          {% if messages %}
+            {% for message in messages %}
+                  {% if message.tags  == 'error' %}
+                <div class="form-group row">
+                      <label style="color: red;">{{ message }}</label>
+                </div>
+                {% else %}
+                <div class="form-group row">
+                      <label style="color: black;">{{ message }}</label>
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+          <button type="submit" id="reccommend_submit_button" class="btn btn-info float-right">Submit Changes</button>
+        </div>
+
+      </form>
+      </div>
+      <!-- /.card -->
+     </div><!-- /.container-fluid -->
+   </section>
+   <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+
+{% endblock content %}
+{% block script %}
+<script>
+     // select
+     $(function () {
+   
+   //Initialize Select2 Elements
+   $('#the_category_select').select2({
+     theme: 'bootstrap4'
+   });
+ })
+</script>
+
+{% endblock script %}

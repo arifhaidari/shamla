@@ -1,0 +1,86 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Users{% endblock title %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Contacts</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+               <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+               <li class="breadcrumb-item active">Users</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+ 
+     <!-- Main content -->
+     <section class="content">
+ 
+       <!-- Default box -->
+       <div class="card card-solid">
+         <div class="card-body pb-0">
+           <div class="row d-flex align-items-stretch">
+                {% for object in object_list %}
+             <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+               <div class="card bg-light">
+                 <div class="card-header text-muted border-bottom-0">
+                  {{ object.user_type }}
+                </div>
+                 <div class="card-body pt-0">
+                   <div class="row">
+                     <div class="col-7">
+                       <h2 class="lead"><b>{{ object.full_name }}</b></h2>
+                       <p class="text-muted text-sm"><b>Email: </b> {{ object.email }} <br>
+                         <b>Last Order: </b> {{ object.billingprofile.order_set.last.updated }}
+                    </p>
+                    <hr>
+                       <ul class="ml-4 mb-0 fa-ul text-muted">
+                         <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone: {{ object.billingprofile.address_set.first.phone }}</li>
+                         <li class="small"><span class="fa-li"><i class="fas fa-lg fa-envelope"></i></span> Email: {{ object.email }}</li>
+                         <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> 
+                              Address: {{ object.billingprofile.address_set.first.street }}, 
+                              {{ object.billingprofile.address_set.first.city }}, {{ object.billingprofile.address_set.first.country }}
+                         </li>
+                       </ul>
+                     </div>
+                     <div class="col-5 text-center">
+                       <img src="{% static 'admin/dist/img/avatar5.png' %}" alt="" class="img-circle img-fluid">
+                     </div>
+                   </div>
+                 </div>
+                 <div class="card-footer">
+                   <div class="text-right">
+                     <a href="{{ object.get_absolute_url }}" class="btn btn-sm btn-primary">
+                       <i class="fas fa-user"></i> View Profile
+                     </a>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             {% endfor %}
+           </div>
+         </div>
+         <!-- /.card-body -->
+         <div class="card-footer">
+          {% include 'pagination.html' with page_obj=page_obj %}
+         </div>
+         <!-- /.card-footer -->
+       </div>
+       <!-- /.card -->
+ 
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}

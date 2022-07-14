@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock title %}
+
+{% block content %}
+
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Placing Order</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'product:product_list' %}">Products</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'cart:item_list' %}">Cart Home</a></li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+
+<!-- Checkout Start -->
+<div class="section section-padding-02 mt-n6">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <!-- Checkout Info End -->
+
+         {% if not request.user.is_authenticated %}
+         <!-- Login Info Start -->
+         <div id="login_section" class="checkout-info">
+               <p class="info-header"> <i class="fa fa-exclamation-circle"></i> Returning customer? <a data-bs-toggle="collapse" href="#login">Click here to login</a></p>
+
+               <div class="collapse" id="login">
+               <div class="card-body">
+                    <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new customer, please proceed to the Billing & Shipping section.</p>
+                    <form method="post" id="login_form">
+                         {% csrf_token %}
+                         <div class="row">
+                              <div class="col-lg-6">
+                                   <div class="single-form">
+                                   <input type="email"  id="login_email" name="login_email" placeholder="Email">
+                                   <small id="login_email_error" style="display: none;color: red;"></small>
+                                   </div>
+                              </div>
+                              <div class="col-lg-6">
+                                   <div class="single-form">
+                                   <input type="password"  id="login_password" name="login_password" placeholder="Password">
+                                   <small id="login_password_error" style="display: none;color: red;"></small>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <div class="single-form d-flex align-items-center">
+                              <button id="login_form_button" class="btn btn-primary btn-hover-dark">Login</button>
+                              <div class="form-check">
+                                   <input type="checkbox" id="remember">
+                                   <label for="remember"><span></span> Remember Me</label>
+                              </div>
+                         </div>
+                         <div class="forget">
+                              <a href="#">Lost Your Password</a>
+                         </div>
+                    </form>
+               </div>
+               </div>
+          </div>
+          <!-- Login Info End -->
+          {% endif %}
+
+         <!-- Coupon Info Start -->
+         <div class="checkout-info">
+             <p class="info-header"> <i class="fa fa-exclamation-circle"></i> Have a coupon? <a data-bs-toggle="collapse" href="#coupon">Click here to enter your code</a></p>
+
+             <div class="collapse" id="coupon">
+                 <div class="card-body">
+                     <form action="#">
+                         <div class="row">
+                             <div class="col-lg-6">
+                                 <div class="single-form">
+                                     <input type="email" placeholder="Coupon code">
+                                 </div>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+         <!-- Coupon Info End -->
+
+         <!-- Checkout Start -->
+         <div class="checkout-wrapper">
+             <form id="billing_and_shipping_form" method="post">
+                  {% csrf_token %}
+                 <div class="row">
+                     <div class="col-lg-7">
+                         <!-- Checkout Form Start -->
+                         <div class="checkout-form">
+                             <div class="checkout-title">
+                                 <h4 class="title">Billing Address</h4>
+                             </div>
+
+                             <div class="row">
+
+                                 <div class="col-sm-12">
+                                   <div class="single-select2">
+                                       <label class="form-label">Previous Addresses</label>
+
+                                       <div class="form-select2">
+                                           <select id="billing_address_select" onchange="setAddress('billing')" name="billing_address_select" class="select2">
+                                               <option value="default">Select a billing address</option>
+                                               {% for address in addresses %}
+                                               <option value="{{ address.id }}">{{ address.city }}, {{ address.country }} - {{ address.street }}</option>
+                                               {% endfor %}
+                                           </select>
+                                       </div>
+                                   </div>
+                               </div>
+                                 <div class="col-sm-6">
+                                     <div class="single-form">
+                                         <label class="form-label">Full Name *</label>
+                                         <input  type="text"  name="billing_full_name" id="billing_full_name">
+                                         <small id="billing_full_name_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                    <div class="single-form">
+                                        <label class="form-label">Company / Nickname</label>
+                                        <input type="text" name="billing_company" id="billing_company">
+                                    </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                   <div class="single-form">
+                                       <label class="form-label">Country *</label>
+                                       <input type="text"  name="billing_country" id="billing_country">
+                                       <small id="billing_country_error" style="display: none;color: red;"></small>
+                                   </div>
+                               </div>
+                               <div class="col-sm-6">
+                                   <div class="single-form">
+                                       <label class="form-label">City *</label>
+                                       <input type="text"  name="billing_city" id="billing_city">
+                                       <small id="billing_city_error" style="display: none;color: red;"></small>
+                                   </div>
+                               </div>
+                               <div class="col-sm-6">
+                                 <div class="single-form">
+                                     <label class="form-label">District *</label>
+                                     <input type="text"  name="billing_district" id="billing_district">
+                                     <small id="billing_district_error" style="display: none;color: red;"></small>
+                                 </div>
+                             </div>
+                             <div class="col-sm-6">
+                                 <div class="single-form">
+                                     <label class="form-label">Postcode / ZIP *</label>
+                                     <input type="text"  name="billing_zipcode" id="billing_zipcode">
+                                     <small id="billing_zipcode_error" style="display: none;color: red;"></small>
+                                 </div>
+                             </div>
+                                 <div class="col-sm-12">
+                                     <div class="single-form">
+                                         <label class="form-label">Street address *</label>
+                                         <input type="text"  placeholder="House number and street name"  name="billing_street" id="billing_street">
+                                         <small id="billing_street_error" style="display: none;color: red;"></small>
+                                         <input type="text" name="billing_apartment" id="billing_apartment" placeholder="Apartment, suite, unit etc. (optional)">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="single-form">
+                                         <label class="form-label">Phone *</label>
+                                         <input type="number" maxlength="14"  name="billing_phone" id="billing_phone">
+                                         <small id="billing_phone_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="single-form">
+                                         <label class="form-label">Email address *</label>
+                                         <input type="email"  name="billing_email" id="billing_email">
+                                         <small id="billing_email_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             {% if not request.user.is_authenticated %}
+                             <div class="single-form">
+                                 <input type="checkbox" id="account" name="account">
+                                 <label for="account"><span></span> Create an account?</label>
+                             </div>
+
+                             <div class="checkout-account">
+                                 <div class="single-form">
+                                     <label class="form-label">Create Account Password *</label>
+                                     <input type="password" placeholder="Password" id="register_password" name="register_password">
+                                     <small id="register_password_error" style="display: none;color: red;"></small>
+                                 </div>
+                                 <div class="single-form">
+                                   <label class="form-label">Confirm Account Password *</label>
+                                   <input type="password" id="register_confirm_password" name="register_confirm_password" placeholder="Confirm Password">
+                                   <small id="register_confirm_password_error" style="display: none;color: red;"></small>
+                               </div>
+                             </div>
+                             {% endif %}
+
+                             <div class="single-form">
+                                 <input type="checkbox" id="shipping" name="shipping">
+                                 <label for="shipping"><span></span> Ship to a different address?</label>
+                             </div>
+                             <br>
+
+                             <div class="checkout-shipping">
+                              <div class="checkout-title">
+                                   <h4 class="title">Shipping Address</h4>
+                               </div>
+  
+                               <div class="row">
+  
+                                   <div class="col-sm-12">
+                                     <div class="single-select2">
+                                         <label class="form-label">Previous Addresses</label>
+  
+                                         <div class="form-select2">
+                                            <select id="shipping_address_select" onchange="setAddress('shipping')" name="shipping_address_select" class="select2">
+                                                <option value="default">Select a shipping address</option>
+                                                {% for address in addresses %}
+                                                <option value="{{ address.id }}">{{ address.city }}, {{ address.country }} - {{ address.street }}</option>
+                                                {% endfor %}
+                                            </select>
+                                         </div>
+                                     </div>
+                                 </div>
+                                   <div class="col-sm-6">
+                                       <div class="single-form">
+                                           <label class="form-label">Full Name *</label>
+                                           <input type="text" name="shipping_full_name" id="shipping_full_name">
+                                           <small id="shipping_full_name_error" style="display: none;color: red;"></small>
+                                       </div>
+                                   </div>
+                                   <div class="col-sm-6">
+                                    <div class="single-form">
+                                        <label class="form-label">Company / Nickname</label>
+                                        <input type="text" name="shipping_company" id="shipping_company">
+                                    </div>
+                                   </div>
+                                   <div class="col-sm-6">
+                                     <div class="single-form">
+                                         <label class="form-label">Country *</label>
+                                         <input type="text" name="shipping_country" id="shipping_country">
+                                         <small id="shipping_country_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="single-form">
+                                         <label class="form-label">City *</label>
+                                         <input type="text" name="shipping_city" id="shipping_city">
+                                         <small id="shipping_city_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                   <div class="single-form">
+                                       <label class="form-label">District *</label>
+                                       <input type="text" name="shipping_district" id="shipping_district">
+                                       <small id="shipping_district_error" style="display: none;color: red;"></small>
+                                   </div>
+                               </div>
+                               <div class="col-sm-6">
+                                   <div class="single-form">
+                                       <label class="form-label">Postcode / ZIP *</label>
+                                       <input type="text" name="shipping_zipcode" id="shipping_zipcode">
+                                       <small id="shipping_zipcode_error" style="display: none;color: red;"></small>
+                                   </div>
+                               </div>
+                                   <div class="col-sm-12">
+                                       <div class="single-form">
+                                           <label class="form-label">Street address *</label>
+                                           <input type="text" placeholder="House number and street name" name="shipping_street" id="shipping_street">
+                                           <small id="shipping_street_error" style="display: none;color: red;"></small>
+                                           <input type="text" placeholder="Apartment, suite, unit etc. (optional)" name="shipping_apartment" id="shipping_apartment">
+                                       </div>
+                                   </div>
+                                   <div class="col-sm-6">
+                                       <div class="single-form">
+                                           <label class="form-label">Phone *</label>
+                                           <input type="number" maxlength="14" name="shipping_phone" id="shipping_phone">
+                                           <small id="shipping_phone_error" style="display: none;color: red;"></small>
+                                       </div>
+                                   </div>
+                                   <div class="col-sm-6">
+                                       <div class="single-form">
+                                           <label class="form-label">Email address *</label>
+                                           <input type="email" name="shipping_email" id="shipping_email">
+                                           <small id="shipping_email_error" style="display: none;color: red;"></small>
+                                       </div>
+                                   </div>
+                               </div>
+                             </div>
+
+                             <div class="single-form checkout-note">
+                                 <label class="form-label">Order notes</label>
+                                 <textarea placeholder="Notes about your order, e.g. special notes for delivery." name="order_note"></textarea>
+                             </div>
+                         </div>
+                         <!-- Checkout Form End -->
+                     </div>
+                     <div class="col-lg-5">
+                         <!-- Checkout Form Start -->
+                         <div class="checkout-order">
+                             <div class="checkout-title">
+                                 <h4 class="title">Your Order</h4>
+                             </div>
+
+                             <div class="checkout-order-table table-responsive">
+                                 <table class="table">
+                                     <thead>
+                                         <tr>
+                                             <th class="Product-name">Product</th>
+                                             <th class="Product-price">Total</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                        {% if not cart_data.is_error and cart_data.queryset %}
+                                        {% for item in cart_data.queryset %}
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>{{ item.product.title|truncatechars:35 }} × {{ item.product_quantity }}</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>${{ item.total_price }}</p>
+                                             </td>
+                                         </tr>
+                                         {% endfor %}
+                                         {% endif %}
+                                     </tbody>
+                                     <tfoot>
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>Subtotal</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.subtotal }}{% else %}$0.00{% endif %}</p>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                            <td class="Product-name">
+                                                <p>Shipping</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.shipment_fee }}{% else %}$0.00{% endif %}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="Product-name">
+                                                <p>Discount</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.discount_total }}{% else %}$0.00{% endif %}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Quantity</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{% if cart_data.queryset.first %}{{ cart_data.queryset.first.cart.current_item_num }}{% else %}0{% endif %}</p>
+                                           </td>
+                                       </tr>
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>Total</p>
+                                             </td>
+                                             <td class="total-price">
+                                                 <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.total }}{% else %}$0.00{% endif %}</p>
+                                             </td>
+                                         </tr>
+                                     </tfoot>
+                                 </table>
+                             </div>
+
+                             <div class="checkout-payment">
+                                 <div class="cart-total-btn d-grid">
+                                     <button id="place_order_button" class="btn btn-dark btn-hover-primary rounded-pill">Place Order</button>
+                                 </div>
+                             </div>
+                         </div>
+                         <!-- Checkout Form End -->
+                     </div>
+                 </div>
+             </form>
+         </div>
+         <!-- Checkout End -->
+     </div>
+ </div>
+ <!-- Checkout End -->
+
+
+{% endblock content %}
+
+{% block script %}
+{% include 'cart/js_file/checkout_script.html' %}
+{% endblock script %}
+

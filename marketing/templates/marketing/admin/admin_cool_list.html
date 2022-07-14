@@ -1,0 +1,125 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Cool Customer{% endblock title %}
+
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Cool Customer Discount</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+               {% if object_list|length == 0 %}
+               <a id="add_brand_button" href="{% url 'marketing:admin_cool_create' %}" class="btn btn-block btn-outline-primary"><i class="fas fa-plus"></i> Add Cool Customer Discount</a>
+               {% endif %}
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+ 
+     <!-- Main content -->
+     <section class="content">
+       <div class="container-fluid">
+         <div class="row">
+           <div class="col-12">
+ 
+             <div class="card">
+               <!-- /.card-header -->
+               <div class="card-body">
+                 <table id="cool_table1" class="table table-bordered table-striped">
+                   <thead>
+                   <tr>
+                     <th>#</th>
+                     <th>Trigger Amount</th>
+                     <th>Discount Amount</th>
+                     <th>Discount Percentage</th>
+                     <th>Is Active</th>
+                     <th>Actions</th>
+                   </tr>
+                   </thead>
+                   <tbody>
+                        {% for object in object_list %}
+                     <tr>
+                     <td>{{ forloop.counter }}</td>
+                     <td>{{ object.trigger_amount }}</td>
+                     <td>
+                       {% if object.discount_by_amount %}
+                       {{ object.discount_by_amount }}
+                       {% else %}
+                       Using Other Methoed
+                       {% endif %}
+                      </td>
+                     <td>
+                       {% if object.discount_by_percentage %}
+                       {{ object.discount_by_percentage }}%
+                       {% else %}
+                       Using Other Methoed
+                       {% endif %}
+                      </td>
+                     <td>{{ object.active|yesno:"Yes,No,Maybe" }}</td>
+                     <td class="text-center">
+                       <a href="{% url 'marketing:admin_cool_update' pk=object.id %}" class="btn btn-outline-info"><i class="fas fa-edit"></i> Edit</a> 
+                    </td>
+                   </tr>
+                   {% endfor %}
+                   </tbody>
+                   <tfoot>
+                   <tr>
+                    <th>#</th>
+                    <th>Trigger Amount</th>
+                    <th>Discount Amount</th>
+                    <th>Discount Percentage</th>
+                    <th>Is Active</th>
+                    <th>Actions</th>
+                   </tr>
+                   </tfoot>
+                 </table>
+               </div>
+               <!-- /.card-body -->
+             </div>
+             <!-- /.card -->
+           </div>
+           <!-- /.col -->
+         </div>
+         <!-- /.row -->
+       </div>
+       <!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block script %}
+
+
+
+<script>
+
+// ================== datatable
+  $(function () {
+    $("#cool_table1").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+    });
+    $('#cool_table2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+
+{% endblock script %}

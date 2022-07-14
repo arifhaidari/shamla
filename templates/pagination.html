@@ -1,0 +1,17 @@
+
+<!-- Page pagination End -->
+<div class="page-pagination">
+     <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1"><i class="fa fa-step-backward"></i></a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-arrow-left"></i></a></li>
+        {% endif %}
+        <li class="page-item">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+        {% if page_obj.has_next %}
+        
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-arrow-right"></i></a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><i class="fa fa-step-forward"></i></a></li>
+        {% endif %}
+     </ul>
+ </div>
+ <!-- Page pagination End -->

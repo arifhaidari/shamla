@@ -1,0 +1,267 @@
+{% load static %}
+
+{% url 'account:profile' as dashboard_profile %}
+{% url 'product:admin_product_list' as product_list %}
+{% url 'product:admin_category_list' as category_list %}
+{% url 'product:admin_color_list' as color_list %}
+{% url 'product:admin_size_list' as size_list %}
+{% url 'product:admin_tag_list' as tag_list %}
+{% url 'product:admin_product_create' as product_create %}
+{% url 'marketing:admin_slider_list' as slider_list %}
+{% url 'marketing:admin_slider_create' as slider_create %}
+{% url 'marketing:admin_brand_list' as brand_list %}
+{% url 'marketing:admin_brand_create' as brand_create %}
+{% url 'marketing:admin_cool_list' as cool_list %}
+{% url 'marketing:admin_cool_create' as cool_create %}
+{% url 'marketing:admin_special_list' as special_list %}
+{% url 'marketing:admin_special_create' as special_create %}
+{% url 'marketing:home_recommendation' as home_recommendation %}
+{% url 'order:admin_report_list' as order_report %}
+{% url 'order:admin_new_list' as order_new %}
+{% url 'order:admin_completed_list' as order_completed %}
+{% url 'order:admin_paid_list' as order_paid %}
+{% url 'order:admin_refunded_list' as order_refunded %}
+{% url 'order:admin_shipment_list' as shipment_list %}
+{% url 'newsletter:newsletter_type_list' as newsletter_type %}
+{% url 'newsletter:mailing_list' as mailing_list %}
+{% url 'newsletter:newsletter_list' as newsletter_list %}
+{% url 'newsletter:customer_message_list' as customer_message_list %}
+{% url 'account:user_list' as user_list %}
+
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+     <!-- Brand Logo -->
+     <a href="{% url 'home' %}" class="brand-link">
+          <img src="{% static 'admin/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+               style="opacity: .8">
+          <span class="brand-text font-weight-light">Shamla Atelier</span>
+     </a>
+
+     <!-- Sidebar -->
+     <div class="sidebar">
+          <!-- Sidebar user panel (optional) -->
+          <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+               <div class="image">
+                    <img src="{% static 'admin/dist/img/avatar5.png' %}" class="img-circle elevation-2" alt="User Image">
+               </div>
+               <div class="info">
+                    <a href="#" class="d-block">{% if request.user.full_name %}{{ request.user.full_name }}{% else %}No Name{% endif %}</a>
+               </div>
+          </div>
+
+          <!-- Sidebar Menu -->
+          <nav class="mt-2">
+               <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                with font-awesome or any other icon font library -->
+                    <li class="nav-item">
+                         <a href="{% url 'account:profile' %}" class="nav-link {% if request.path == dashboard_profile %}active{% else %}{% endif %}">
+                              <i class="nav-icon fas fa-tachometer-alt"></i>
+                              <p>
+                                   Dashboard
+                              </p>
+                         </a>
+                    </li>
+                    <li class="nav-item">
+                         <a href="{% url 'product:admin_product_list' %}" class="nav-link {% if request.path == product_list or request.path == product_create %}active{% else %}{% endif %}">
+                              <i class="nav-icon fas fa-cart-plus"></i>
+                              <p>
+                                   Products
+                              </p>
+                         </a>
+                    </li>
+                    <li class="nav-item has-treeview {% if request.path == order_report or request.path == order_new or request.path == order_completed or request.path == shipment_list or request.path == order_paid or request.path == order_refunded %}menu-open{% else %}{% endif %}">
+                         <a href="#" class="nav-link {% if request.path == order_report or request.path == order_new or request.path == order_completed or request.path == shipment_list or request.path == order_paid or request.path == order_refunded %}active{% else %}{% endif %}">
+                           <i class="nav-icon fas fa-shopping-basket"></i>
+                           <p>
+                             Orders
+                             <i class="right fas fa-angle-left"></i>
+                           </p>
+                         </a>
+                         <ul class="nav nav-treeview">
+                           <li class="nav-item">
+                             <a href="{% url 'order:admin_report_list' %}" class="nav-link {% if request.path == order_report %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Reports</p>
+                             </a>
+                           </li>
+                           <li class="nav-item">
+                            <a href="{% url 'order:admin_completed_list' %}" class="nav-link {% if request.path == order_completed %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Completed Orders</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'order:admin_paid_list' %}" class="nav-link {% if request.path == order_paid %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Paid Orders</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'order:admin_new_list' %}" class="nav-link {% if request.path == order_new %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Created Orders</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'order:admin_refunded_list' %}" class="nav-link {% if request.path == order_refunded %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Refunded Orders</p>
+                            </a>
+                          </li>
+                           <li class="nav-item">
+                              <a href="{% url 'order:admin_shipment_list' %}" class="nav-link {% if request.path == shipment_list %}active{% else %}{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shipment Method</p>
+                              </a>
+                            </li>
+                         </ul>
+                       </li>
+                    <li class="nav-item has-treeview {% if request.path == category_list or request.path == size_list or request.path == color_list or request.path == tag_list %}menu-open{% else %}{% endif %}">
+                         <a href="#" class="nav-link {% if request.path == category_list or request.path == size_list or request.path == color_list or request.path == tag_list %}active{% else %}{% endif %}">
+                           <i class="nav-icon fas fa-search-plus"></i>
+                           <p>
+                             SEO
+                             <i class="right fas fa-angle-left"></i>
+                           </p>
+                         </a>
+                         <ul class="nav nav-treeview">
+                           <li class="nav-item">
+                             <a href="{% url 'product:admin_category_list' %}" class="nav-link {% if request.path == category_list %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Category</p>
+                             </a>
+                           </li>
+                           <li class="nav-item">
+                             <a href="{% url 'product:admin_tag_list' %}" class="nav-link {% if request.path == tag_list %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Tag</p>
+                             </a>
+                           </li>
+                           <li class="nav-item">
+                             <a href="{% url 'product:admin_color_list' %}" class="nav-link {% if request.path == color_list %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Color</p>
+                             </a>
+                           </li>
+                           <li class="nav-item">
+                             <a href="{% url 'product:admin_size_list' %}" class="nav-link {% if request.path == size_list %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Size</p>
+                             </a>
+                           </li>
+                         </ul>
+                       </li>
+
+
+                       <li class="nav-item has-treeview {% if request.path == newsletter_list or request.path == newsletter_type or request.path == mailing_list %}menu-open{% else %}{% endif %}">
+                        <a href="#" class="nav-link {% if request.path == newsletter_list or request.path == newsletter_type or request.path == mailing_list %}active{% else %}{% endif %}">
+                          <i class="nav-icon fas fa-ad"></i>
+                          <p>
+                            Newsletter
+                            <i class="right fas fa-angle-left"></i>
+                          </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                            <a href="{% url 'newsletter:mailing_list' %}" class="nav-link {% if request.path == mailing_list %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Mailing List</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'newsletter:newsletter_type_list' %}" class="nav-link {% if request.path == newsletter_type %}active{% else %}{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Newsletter Type</p>
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{% url 'newsletter:newsletter_list' %}" class="nav-link {% if request.path == newsletter_list %}active{% endif %}">
+                              <i class="far fa-circle nav-icon"></i>
+                              <p>Newsletter</p>
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                    <li class="nav-item">
+                         <a href="{% url 'newsletter:customer_message_list' %}" class="nav-link {% if request.path == customer_message_list %}active{% endif %}">
+                              <i class="nav-icon fas fa-envelope-open-text"></i>
+                              <p>
+                                   Messages
+                              </p>
+                         </a>
+                    </li>
+                    <li class="nav-item">
+                         <a href="" class="nav-link">
+                              <i class="nav-icon fas fa-chart-area"></i>
+                              <p>
+                                   Analytics
+                              </p>
+                         </a>
+                    </li>
+                    <li class="nav-item">
+                         <a href="{% url 'account:user_list' %}" class="nav-link  {% if request.path == user_list %}active{% endif %}">
+                              <i class="nav-icon fas fa-users"></i>
+                              <p>
+                                   Users
+                              </p>
+                         </a>
+                    </li>
+                    <li class="nav-item has-treeview {% if request.path == slider_list or request.path == slider_create or request.path == brand_list or request.path == brand_create or request.path == cool_list or request.path == cool_create  or request.path == special_list or request.path == special_create or request.path == home_recommendation %}menu-open{% else %}{% endif %}">
+                         <a href="#" class="nav-link  {% if request.path == slider_list or request.path == slider_create or request.path == brand_list or request.path == brand_create or request.path == cool_list or request.path == cool_create or request.path == special_list or request.path == special_create or request.path == home_recommendation %}active{% else %}{% endif %}">
+                           <i class="nav-icon fas fa-mail-bulk"></i>
+                           <p>
+                             Marketing
+                             <i class="right fas fa-angle-left"></i>
+                           </p>
+                         </a>
+                         <ul class="nav nav-treeview">
+                           <li class="nav-item">
+                             <a href="{% url 'marketing:admin_slider_list' %}" class="nav-link {% if request.path == slider_list or request.path == slider_create %}active{% else %}{% endif %}">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Slider</p>
+                             </a>
+                           </li>
+                           <li class="nav-item">
+                              <a href="{% url 'marketing:admin_brand_list' %}" class="nav-link {% if request.path == brand_list or request.path == brand_create %}active{% else %}{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Partners</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              <a href="{% url 'marketing:admin_cool_list' %}" class="nav-link {% if request.path == cool_list or request.path == cool_create %}active{% else %}{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Cool Customer</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                               <a href="{% url 'marketing:admin_special_list' %}" class="nav-link {% if request.path == special_list or request.path == special_create %}active{% else %}{% endif %}">
+                                 <i class="far fa-circle nav-icon"></i>
+                                 <p>Special Offer</p>
+                               </a>
+                             </li>
+                             <li class="nav-item">
+                              <a href="{% url 'marketing:home_recommendation' %}" class="nav-link {% if request.path == home_recommendation %}active{% else %}{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Recommendation</p>
+                              </a>
+                            </li>
+                         </ul>
+                       </li>
+                    <li class="nav-item">
+                         <a href="{% url 'logout' %}" class="nav-link">
+                              <i class="nav-icon fas fa-sign-out-alt"></i>
+                              <p>
+                                   Logout
+                              </p>
+                         </a>
+                    </li>
+               </ul>
+          </nav>
+          <!-- /.sidebar-menu -->
+     </div>
+     <!-- /.sidebar -->
+</aside>
+
+<!-- /.end aside -->

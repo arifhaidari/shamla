@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Product Detail{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Product Detail</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'product:product_list' %}">Products</a></li>/
+                 <li class="breadcrumb active">Product Detail</li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+ 
+ <!-- Product Details Start -->
+ <div class="section section-padding-02 mt-n10">
+     <div class="container">
+         <div class="row justify-content-center">
+             <div class="col-lg-10">
+                 <!-- Product Details Content Start -->
+                 <div class="product-details-wrapper">
+                     <div class="row gx-md-10 align-items-xl-center">
+                         <div class="col-md-6">
+                             <!-- Product Details Images Start -->
+                             <div class="product-details-images">
+                                 <div class="swiper-container gallery-top">
+                                     <div class="swiper-wrapper">
+                                         {% for img in object.productimages_set.all %}
+                                         <div class="swiper-slide">
+                                             <img src="{{ img.image.url }}" alt="">
+                                         </div>
+                                         {% endfor %}
+                                     </div>
+                                 </div>
+                                 <div class="swiper-container gallery-thumbs">
+                                     <div class="swiper-wrapper">
+                                        {% for img in object.productimages_set.all %}
+                                         <div class="swiper-slide">
+                                             <img src="{{ img.image.url }}" alt="">
+                                         </div>
+                                         {% endfor %}
+                                     </div>
+                                 </div>
+                             </div>
+                             <!-- Product Details Images End -->
+                         </div>
+                         <div class="col-md-6">
+                             <!-- Product Details Content Start -->
+                             <div class="product-details-content">
+                                 <div class="product-category">
+                                     <a href="{% url 'product:product_list' %}?q={% if object.category.all %}{{ object.category.first.id }}{% else %}all{% endif %}">{% if object.category.all %}{{ object.category.first.name }}{% else %}Default Category{% endif %}</a>
+                                 </div>
+                                 <h4 class="product-title">{{ object.title }}</h4>
+                                 <div class="product-price-rating">
+                                     <div class="product-price">
+                                        <span class="old-price">{% if object.old_price %}${{ object.old_price }}{% endif %}</span>
+                                         <span class="sale-price">${{ object.price }}</span>
+                                     </div>
+                                     <div class="product-rating">
+                                         <div class="rating-star">
+                                             <div class="star" style="width: 80%;"></div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <p>
+                                    If you product has different sizes and colors then select your favorite color, size and quantity. 
+                                    If you do not select the color and size then the first color and size would be selected by default.
+
+                                 </p>
+                                 <div class="product-info">
+                                     <div class="single-info">
+                                         <span class="label">Availability:</span>
+                                         <span class="value">
+                                            {% if object.stock == 0 %} 
+                                            Out of Stock
+                                            {% else %}
+                                            In Stock
+                                            {% endif %}
+                                         </span>
+                                     </div>
+                                     <div class="single-info">
+                                         <span class="label">Product Code:</span>
+                                         <span class="value">SKU125E84</span>
+                                     </div>
+                                     <div class="single-info">
+                                        <span class="label">Discount:</span>
+                                        <span class="value">
+                                            {% if object.discount_percentage %}
+                                            {{ object.discount_percentage }}%
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                     <div class="single-info">
+                                         <span class="label">Size:</span>
+                                         <ul id="product_selected_size" class="size">
+                                             {% if object.size.all %}
+                                             {% for size in object.size.all %}
+                                             <li value="{{ size.id }}" class="{% if forloop.counter == 1 %}active{% endif %}">{{ size.name }}</li>
+                                             {% endfor %}
+                                             {% else %}
+                                             <li value="" class="active">Free Size</li>
+                                             {% endif %}
+                                         </ul>
+                                     </div>
+                                     <input type="hidden" value="{{ object.id }}" id="product_id">
+                                     <div class="single-info">
+                                        <span class="label">Color:</span>
+                                        <ul id="product_selected_color" class="size">
+                                            {% if object.color.all %}
+                                            {% for color in object.color.all %}
+                                            <li value="{{ color.id }}" class="{% if forloop.counter == 1 %}active{% endif %}">{{ color.name }}</li>
+                                            {% endfor %}
+                                            {% else %}
+                                            <li value="" class="active">No Color Specification</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                     <div class="single-info">
+                                         <span class="label">Quantity:</span>
+                                         <div class="product-quantity d-inline-flex">
+                                             <button type="button" class="sub">-</button>
+                                             <input type="text" id="item_quantity" value="1" />
+                                             <button type="button" class="add">+</button>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="product-cart-favourate">
+                                     <div class="product-cart">
+                                         <a class="btn btn-info btn-hover-primary rounded-pill" onclick="callTheCartUpdater()">Add to Cart</a>
+                                     </div>
+                                     <div class="product-favourate">
+                                         <a class="favourate"><i class="fa fa-heart-o"></i></a>
+                                     </div>
+                                 </div>
+                             </div>
+                             <!-- Product Details Content End -->
+                         </div>
+                     </div>
+                 </div>
+                 <!-- Product Details Content End -->
+             </div>
+         </div>
+
+         <!-- Product Details Tabs Start -->
+         <div class="product-details-tabs section-padding">
+             <ul class="nav nav-justified">
+                 <li class="nav-item"><a class="active" data-bs-toggle="tab" href="#description">Description</a></li>
+                 <li class="nav-item"><a data-bs-toggle="tab" href="#reviews">Reviews</a></li>
+             </ul>
+             <div class="tab-content" id="myTabContent">
+                 <div class="tab-pane fade show active" id="description">
+                     <div class="product-description">
+                         <p>
+                            {% autoescape off %}
+                            <div class="unknown351">{{ object.description }}</div>
+                            {% endautoescape %}
+                         </p>
+                     </div>
+                 </div>
+                 <div class="tab-pane fade" id="reviews">
+                     <div class="reviews">
+                         <h4 class="reviews-title">03 Reviews</h4>
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <div class="reviews-comment">
+                                     <ul class="comment-items">
+                                         <li>
+                                             <div class="single-comment">
+                                                 <div class="comment-thumb">
+                                                     <img src="assets/images/comment-1.jpg" alt="">
+                                                 </div>
+                                                 <div class="comment-content">
+                                                     <div class="comment-name-date">
+                                                         <h5 class="name">Adam Gilcrist</h5>
+                                                         <span class="date">27 October, 2020</span>
+                                                     </div>
+                                                     <div class="comment-rating">
+                                                         <div class="rating-star" style="width: 80%;"></div>
+                                                     </div>
+                                                     <p>Rationally encounter consequences that extremely again is there anyone who loves or pursues or desires to obtain because</p>
+                                                 </div>
+                                             </div>
+                                         </li>
+                                         <li>
+                                             <div class="single-comment">
+                                                 <div class="comment-thumb">
+                                                     <img src="assets/images/comment-1.jpg" alt="">
+                                                 </div>
+                                                 <div class="comment-content">
+                                                     <div class="comment-name-date">
+                                                         <h5 class="name">Adam Gilcrist</h5>
+                                                         <span class="date">27 October, 2020</span>
+                                                     </div>
+                                                     <div class="comment-rating">
+                                                         <div class="rating-star" style="width: 87%;"></div>
+                                                     </div>
+                                                     <p>Rationally encounter consequences that extremely again is there anyone who loves or pursues or desires to obtain because</p>
+                                                 </div>
+                                             </div>
+                                         </li>
+                                         <li>
+                                             <div class="single-comment">
+                                                 <div class="comment-thumb">
+                                                     <img src="assets/images/comment-1.jpg" alt="">
+                                                 </div>
+                                                 <div class="comment-content">
+                                                     <div class="comment-name-date">
+                                                         <h5 class="name">Adam Gilcrist</h5>
+                                                         <span class="date">27 October, 2020</span>
+                                                     </div>
+                                                     <div class="comment-rating">
+                                                         <div class="rating-star" style="width: 48%;"></div>
+                                                     </div>
+                                                     <p>Rationally encounter consequences that extremely again is there anyone who loves or pursues or desires to obtain because</p>
+                                                 </div>
+                                             </div>
+                                         </li>
+                                     </ul>
+                                 </div>
+                             </div>
+                             <div class="col-md-6">
+                                 <div class="reviews-form">
+                                     <h4 class="form-title">Add a Review</h4>
+
+                                     <form action="#">
+                                         <div class="reviews-rating">
+                                             <label>Your Rating:</label>
+                                             <ul id="rating" class="rating">
+                                                 <li class="star" title='Poor' data-value='1'><i class="fa fa-star-o"></i></li>
+                                                 <li class="star" title='Poor' data-value='2'><i class="fa fa-star-o"></i></li>
+                                                 <li class="star" title='Poor' data-value='3'><i class="fa fa-star-o"></i></li>
+                                                 <li class="star" title='Poor' data-value='4'><i class="fa fa-star-o"></i></li>
+                                                 <li class="star" title='Poor' data-value='5'><i class="fa fa-star-o"></i></li>
+                                             </ul>
+                                         </div>
+                                         <div class="row">
+                                             <div class="col-sm-6">
+                                                 <div class="single-form">
+                                                     <input type="text" placeholder="Name">
+                                                 </div>
+                                             </div>
+                                             <div class="col-sm-6">
+                                                 <div class="single-form">
+                                                     <input type="email" placeholder="Email">
+                                                 </div>
+                                             </div>
+                                             <div class="col-sm-12">
+                                                 <div class="single-form">
+                                                     <textarea placeholder="Your Review"></textarea>
+                                                 </div>
+                                             </div>
+                                             <div class="col-sm-12">
+                                                 <div class="single-form">
+                                                     <button class="btn btn-primary btn-hover-dark rounded-pill">Send</button>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </form>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <!-- Product Details Tabs End -->
+
+         <!-- Related Products Start -->
+         <div class="related-products section-padding mt-n2">
+             <div class="section-title">
+                 <h2 class="title">Related Products</h2>
+             </div>
+             <div class="product-active">
+                 <div class="swiper-container">
+                     <div class="swiper-wrapper">
+                         {% if related_products %}
+                         {% for product in related_products %}
+                         <div class="swiper-slide">
+                             <!-- Single-Product Start -->
+                             <div class="single-product">
+                                 <div class="product-image">
+                                    <a href="{{ product.get_absolute_url }}">
+                                        <img src="{{ product.productimages_set.first.image.url }}"
+                                             alt="product">
+                                        <img class="hover-image"
+                                             src="{{ product.productimages_set.last.image.url }}"
+                                             alt="product">
+                                   </a>
+                                 </div>
+                                 <div class="product-content">
+                                     <div class="product-category-action">
+                                         <div class="product-category">
+                                             <a href="{% url 'product:product_list' %}?q={% if product.category.all %}{{ product.category.first.id }}{% else %}all{% endif %}">{% if product.category.all %}{{ product.category.first.name }}{% else %}Default Category{% endif %}</a>
+                                         </div>
+                                         <div class="product-action">
+                                            <a  onclick="updateCartItem('{{ product.id }}', 'add', '{{ object.size.first.id }}', '{{ object.color.first.id }}', 1)" class="action" data-tooltip="tooltip"
+                                            data-placement="top" title="Add to Cart"><i
+                                                 class="fa fa-shopping-cart"></i></a>
+                                             <a href="#" class="action" data-tooltip="tooltip" data-placement="top" title="Compare"><i class="fa fa-heart-o"></i></a>
+                                         </div>
+                                     </div>
+                                     <h4 class="product-title"><a href="">{{ product.title|truncatechars:20 }}</a></h4>
+                                     <div class="product-price">
+                                        <span class="old-price">{% if product.old_price %}${{ product.old_price }}{% endif %}</span>
+                                         <span class="sale-price">${{ product.price }}</span>
+                                     </div>
+                                 </div>
+                             </div>
+                             <!-- Single-Product End -->
+                         </div>
+                         {% endfor %}
+                         {% else %}
+                         <h4>There is no related products</h4>
+                         {% endif %}
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <!-- Related Products End -->
+     </div>
+ </div>
+ <!-- Product Details End -->
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    function callTheCartUpdater() {
+        var theSize = ''
+        var theColor = ''
+        if($('#product_selected_size').find('li.active').val() != 0) {
+            theSize = $('#product_selected_size').find('li.active').val()
+        }
+        if($('#product_selected_color').find('li.active').val() != 0) {
+            theColor = $('#product_selected_color').find('li.active').val()
+        }
+        updateCartItem($('#product_id').val(), 'add', theSize, theColor, $('#item_quantity').val(), 'other')
+    }
+</script>
+{% include 'product/js_file/update_cart_script.html' %}
+{% endblock script %}
+

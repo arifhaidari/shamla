@@ -1,0 +1,183 @@
+<script type="text/javascript"> var theLoginToken = '{{ csrf_token }}';</script>
+<script>var checkoutLoginUrl = '{% url "cart:checkout_login" %}';</script>
+{% load cart_tag %}
+<script>var theAddressListRaw = '{{ addresses|jsonify|safe }}';</script>
+
+<script>
+function setAddress(theType) {
+     var theAddressList = JSON.parse(theAddressListRaw);
+     console.log('value fo the type')
+     var theSelectVal = document.getElementById(theType + '_address_select').value;
+     // console.log(theAddressList[0]['fields']['full_name'])
+     // console.log(typeof [...theAddressList])
+     var singleObject = null;
+     for(var i=0; i < theAddressList.length; i++) {
+          if(theAddressList[i]['pk'] == theSelectVal) {
+               console.log('conditon is true ')
+               console.log(theAddressList[i]['pk'])
+               singleObject = theAddressList[i]['fields']
+          }
+
+
+     }
+     console.log('value fo singleObject')
+     console.log(singleObject)
+     console.log(theType)
+     $('#' + theType + '_full_name').attr("value", singleObject.full_name)
+     $('#' + theType + '_company').attr("value", singleObject.company)
+     $('#' + theType + '_country').attr("value", singleObject.country)
+     $('#' + theType + '_city').attr("value", singleObject.city)
+     $('#' + theType + '_district').attr("value", singleObject.district)
+     $('#' + theType + '_zipcode').attr("value", singleObject.zipcode)
+     $('#' + theType + '_street').attr("value", singleObject.street)
+     $('#' + theType + '_apartment').attr("value", singleObject.apartment)
+     $('#' + theType + '_phone').attr("value", singleObject.phone)
+     // $('#billing_email').attr("value", 'hamid@gmail.com') // not working with jquery
+     document.getElementById(theType + '_email').value = singleObject.email;
+
+}
+
+var isErrorInBillingForm = false;
+const billingShippingForm = document.getElementById('billing_and_shipping_form')
+
+
+
+$('#place_order_button').click(function() {
+     console.log('place_order_button is submitted')
+     billingShippingForm.addEventListener('submit', (e) => {
+         console.log('form is also submitted')
+        //   e.preventDefault();
+
+     //    billing address
+     if($('#billing_full_name').val().trim() === '' || $('#billing_full_name').val().trim() == null) {
+               setErrorJQuery($('#billing_full_name'), $('#billing_full_name_error'), 'Full name field is required')
+          }
+
+          if($('#billing_country').val().trim() === '' || $('#billing_country').val().trim() == null) {
+               setErrorJQuery($('#billing_country'), $('#billing_country_error'), 'Country field is required')
+          }
+
+          if($('#billing_city').val().trim() === '' || $('#billing_city').val().trim() == null) {
+               setErrorJQuery($('#billing_city'), $('#billing_city_error'), 'City field is required')
+          }
+
+          if($('#billing_district').val().trim() === '' || $('#billing_district').val().trim() == null) {
+               setErrorJQuery($('#billing_district'), $('#billing_district_error'), 'District field is required')
+          }
+
+          if($('#billing_zipcode').val().trim() === '' || $('#billing_zipcode').val().trim() == null) {
+               setErrorJQuery($('#billing_zipcode'), $('#billing_zipcode_error'), 'Postcode/zip field is required')
+          }
+
+          if($('#billing_street').val().trim() === '' || $('#billing_street').val().trim() == null) {
+               setErrorJQuery($('#billing_street'), $('#billing_street_error'), 'Street field is required')
+          }
+
+          if($('#billing_phone').val().trim() === '' || $('#billing_phone').val().trim() == null) {
+               setErrorJQuery($('#billing_phone'), $('#billing_phone_error'), 'Phone field is required')
+          }
+
+          if($('#billing_email').val().trim() === '' || $('#billing_email').val().trim() == null) {
+               setErrorJQuery($('#billing_email'), $('#billing_email_error'), 'Email field is required')
+          } else {
+          if (!validateEmail($('#billing_email').val())) {
+               setErrorJQuery($('#billing_email'), $('#billing_email_error'), 'Email is not valid')
+          }
+     }
+
+
+
+     //    shipping address
+        if ($('#shipping').is(":checked"))
+        {
+            console.log('it is checked ----')
+            if($('#shipping_full_name').val().trim() === '' || $('#shipping_full_name').val().trim() == null) {
+                setErrorJQuery($('#shipping_full_name'), $('#shipping_full_name_error'), 'Full name field is required')
+            }
+
+            if($('#shipping_country').val().trim() === '' || $('#shipping_country').val().trim() == null) {
+                setErrorJQuery($('#shipping_country'), $('#shipping_country_error'), 'Country field is required')
+            }
+
+            if($('#shipping_city').val().trim() === '' || $('#shipping_city').val().trim() == null) {
+                setErrorJQuery($('#shipping_city'), $('#shipping_city_error'), 'City field is required')
+            }
+
+            if($('#shipping_district').val().trim() === '' || $('#shipping_district').val().trim() == null) {
+                setErrorJQuery($('#shipping_district'), $('#shipping_district_error'), 'District field is required')
+            }
+
+            if($('#shipping_zipcode').val().trim() === '' || $('#shipping_zipcode').val().trim() == null) {
+                setErrorJQuery($('#shipping_zipcode'), $('#shipping_zipcode_error'), 'Postcode/zip field is required')
+            }
+
+            if($('#shipping_street').val().trim() === '' || $('#shipping_street').val().trim() == null) {
+                setErrorJQuery($('#shipping_street'), $('#shipping_street_error'), 'Street field is required')
+            }
+
+            if($('#shipping_phone').val().trim() === '' || $('#shipping_phone').val().trim() == null) {
+                setErrorJQuery($('#shipping_phone'), $('#shipping_phone_error'), 'Phone field is required')
+            }
+
+            if($('#shipping_email').val().trim() === '' || $('#shipping_email').val().trim() == null) {
+                setErrorJQuery($('#shipping_email'), $('#shipping_email_error'), 'Email field is required')
+            } else {
+               if (!validateEmail($('#shipping_email').val())) {
+                    setErrorJQuery($('#shipping_email'), $('#shipping_email_error'), 'Email is not valid')
+               }
+            }
+
+        }
+
+          
+        // Create new account
+        if ($('#account').is(":checked")) {
+            if($('#register_password').val() === '' || $('#register_password').val().trim() == null) {
+                setErrorJQuery($('#register_password'), $('#register_password_error'), 'Password field is required')
+            }
+            if ($('#register_confirm_password').val().trim() === '' || $('#register_confirm_password').val().trim() == null) {
+                setErrorJQuery($('#register_confirm_password'), $('#register_confirm_password_error'), 'Confirm Password field is required')
+            } else {
+                if ($('#register_password').val().trim() !== $('#register_confirm_password').val().trim()) {
+                    setErrorJQuery($('#register_confirm_password'), $('#register_confirm_password_error'), 'Passwords do not match')
+            } else {
+                if ($('#register_confirm_password').val().trim().length < 3 || $('#register_password').val().trim().length > 20) {
+                    setErrorJQuery($('#register_password'), $('#register_password_error'), 'Password must be between 3 and 20 characters')
+                }
+            }
+            }
+        }
+
+
+          if (isErrorInBillingForm) { 
+               console.log('yes there is error');
+               isErrorInBillingForm = false;
+               e.preventDefault();
+          }
+     })
+})
+
+function setErrorJQuery(inputField, errorArea, errorMessage) {
+     console.log('shit there is error ')
+     isErrorInBillingForm = true
+     inputField.css('border', 'dashed 2px red')
+     errorArea.text(errorMessage)
+    errorArea.css('display', 'block')
+   }
+
+function setError(inputField, errorArea, errorMessage) {
+     console.log('shit there is error ')
+     isErrorInLogin = true
+     inputField.style.border = 'dashed 2px red'
+     errorArea.innerHTML = errorMessage
+     errorArea.style.display = 'block'
+   }
+
+   function validateEmail(email) {
+     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+     return re.test(String(email).toLowerCase());
+}
+
+// ////// Login Section End
+
+</script>

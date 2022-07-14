@@ -1,0 +1,129 @@
+<script type="text/javascript"> var theToken = '{{ csrf_token }}';</script>
+<script type="text/javascript"> var cartUrl = '{% url "cart:update_cart" %}';</script>
+<script>var updateWishUrl = '{% url "update_wish_list" %}';</script>
+<script>
+
+     function addToWishList(productId, sizeId, colorId) {
+          console.log('inside the addd to wish list')
+          console.log(productId, sizeId, colorId)
+          const formData = new FormData();
+          formData.append('csrfmiddlewaretoken', theToken);
+          formData.append('product_id', productId);
+          formData.append('size_id', sizeId);
+          formData.append('color_id', colorId);
+          $.ajax({
+          type: 'POST',
+          url: updateWishUrl,
+          data: formData,
+          success: function(response) {
+               console.log('value of response');
+               console.log(response);
+               if (!response.is_error) {
+                    console.log('no error at all')
+                    
+               } else {
+               console.log('do not do anything');
+               }
+          },
+          error: function(error) {
+               console.log('error submitting by modal ================', error);
+          },
+          cache: false,
+          contentType: false,
+          processData: false,
+          });
+     
+     }
+
+    //  update the cart
+    const productMiniList = document.getElementById('product_mini_list')
+
+    function updateCartItem(productId, operation, sizeId, colorId, quantity, page) {
+    const cartProductQuantity = document.getElementById('cart_product_quantity_' + productId)
+        console.log('vlaue of productId, operation, size, color, quantity, page')
+        console.log(productId, operation, sizeId, colorId, quantity, page)
+
+        let subQuantity = 0
+
+        if (operation == 'subtract') {
+          subQuantity = Number($('#cart_summary_product_quantity_' + page).val());
+          console.log('value of theVal')
+          console.log(subQuantity)
+        }
+
+        
+        
+        
+    if(operation == 'subtract' && subQuantity > 1 || operation == 'add') {
+       const fd = new FormData();
+       fd.append('csrfmiddlewaretoken', theToken);
+       fd.append('product_id', productId);
+       fd.append('operation', operation);
+       fd.append('quantity', quantity);
+       fd.append('size_id', sizeId);
+       fd.append('color_id', colorId);
+       $.ajax({
+         type: 'POST',
+         url: cartUrl,
+         data: fd,
+         success: function(response) {
+           console.log('value of response');
+           console.log(response);
+           if (!response.is_error) {
+               console.log('no error bro ')
+               $('#cart_item_num').html(response.cart_item_num)
+               $('#cart_current_item').html(response.cart_item_num)
+               $('#cart_subtotal').html('$' + response.cart_subtotal)
+               $('#cart_total').html('$' + response.cart_total)
+               $('#cart_discount').html('$' + response.cart_discount)
+               if(page != 'other') {
+                console.log('page is not other')
+                  $('#total_discount_' + page).text('$' + response.total_discount)
+                  $('#total_price_' + page).text('$' + response.total_price)
+                  // cart summary
+                  $('#cart_summary_subtotal').text('$' + response.cart_subtotal)
+                  $('#shipping_price').text('$' + response.shipment_fee)
+                  $('#cart_summary_discount').text('$' + response.cart_discount)
+                  $('#cart_summary_item_number').text(response.cart_item_num)
+                  $('#cart_summary_total').text('$' + response.cart_total)
+                }
+               if(response.is_new_product == true) {
+                   console.log('insid the is it true')
+                   $("#no_item_in_cart").css("display", "none");
+                  var theOption = `<li>
+                                    <div class="single-cart-item">
+                                        <div class="cart-thumb">
+                                            <a id="product_image_thumb" href="` + response.the_url + `"><img style="width: 98px;height: 98px;" src="` + response.image_url + `" alt="Product Image"></a>
+                                        </div>
+                                        <div class="cart-item-content">
+                                            <h6 class="product-name">` + response.product_title + `</h6>
+                                            <span class="product-price">$` + response.product_price + `</span>
+                                            <div class="attributes-content">
+                                                <span><strong>Size:</strong> ` + response.product_size + ` </span>
+                                                <span><strong>Color:</strong> ` + response.product_color + ` </span>
+                                                <span id="cart_product_quantity_` + response.product_id + `"><strong>Quantity:</strong> ` + response.product_quantity + ` </span>
+                                            </div>
+                                            <a href="#" class="remove-cart"><i class="icon-x"></i></a>
+                                        </div>
+                                    </div>
+                                </li>`;
+                        // productMiniList.append(theOption)
+                        productMiniList.insertAdjacentHTML('beforeend', theOption);
+                            } else {
+                                console.log('isndie the else')
+                                cartProductQuantity.innerHTML = '<strong>Quantity:</strong> ' + response.product_quantity;
+               }
+           } else {
+             console.log('do not do anything');
+           }
+         },
+         error: function(error) {
+           console.log('error submitting by modal ================', error);
+         },
+         cache: false,
+         contentType: false,
+         processData: false,
+       });
+    }
+   }
+</script>

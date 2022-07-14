@@ -1,0 +1,389 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Shopping Cart{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Shopping Cart</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'product:product_list' %}">Products</a></li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+ {% if object_list|length != 0 %}
+
+ <!-- Cart Start -->
+ <div class="section section-padding-02 mt-n1">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            <br>
+        </div>
+        <!-- Checkout Info End -->
+         <!-- Cart Start -->
+         <div class="cart-wrapper">
+             <div class="cart-table table-responsive">
+                 <table class="table">
+                     <thead>
+                         <tr>
+                             <th class="product-image">Image</th>
+                             <th class="product-name">Product Name</th>
+                             <th class="product-quantity">Quantity</th>
+                             <th class="product-price">Total Discount</th>
+                             <th class="product-price">Total Price</th>
+                             <th class="product-action">Action</th>
+                         </tr>
+                     </thead>
+                     <tbody id="cart_table">
+                          {% if object_list %}
+                          {% for item in object_list %}
+                         <tr id="product_row_{{ item.id }}">
+                             <td class="product-image">
+                                 <img style="width: 98px;height: 110px;" src="{{ item.product.productimages_set.first.image.url }}" alt="">
+                             </td>
+                             <td class="product-name">
+                                 <a class="name" href="{{ item.product.get_absolute_url }}">{{ item.product.title|truncatechars:40 }}</a><br>
+                                 <small><strong>Size:</strong> {% if item.size %}{{ item.size.name }}{% else %}Free Size{% endif %} </small><br>
+                                 <small><strong>Color:</strong> {% if item.color %}{{ item.color.name }}{% else %}No Color{% endif %} </small>
+                             </td>
+                             <td class="product-quantity">
+                                 <div class="product-quantity d-inline-flex">
+                                     <button type="button" onclick="updateCartItem('{{ item.product.id }}', 'subtract', '{% if item.size %}' + '{{ item.size.id }}' + '{% endif %}', '{% if item.color %}' + '{{ item.color.id }}' + '{% endif %}', 1, '{{ item.id }}')" class="sub">-</button>
+                                     <input type="text" id="cart_summary_product_quantity_{{ item.id }}" value="{{ item.product_quantity }}" />
+                                     <button type="button" onclick="updateCartItem('{{ item.product.id }}', 'add', '{% if item.size %}' + '{{ item.size.id }}' + '{% endif %}', '{% if item.color %}' + '{{ item.color.id }}' + '{% endif %}', 1, '{{ item.id }}')" class="add">+</button>
+                                 </div>
+                             </td>
+                             <td class="product-price">
+                                 <div class="product-price">
+                                     <span id="total_discount_{{ item.id }}" class="">${{ item.total_discount }}</span>
+                                 </div>
+                             </td>
+                             <td class="product-price">
+                                 <div class="product-price">
+                                     <span id="total_price_{{ item.id }}" class="sale-price">${{ item.total_price }}</span>
+                                 </div>
+                             </td>
+                             <td class="product-action">
+                                 <a class="close" onclick="deleteItem('{{ item.id }}')"><span class="material-icons">clear</span></a>
+                             </td>
+                         </tr>
+                         {% endfor %}
+                         {% else %}
+                         <h5 class="text-center">No Item In The Cart</h5>
+                         <br>
+                         <br>
+                         {% endif %}
+                     </tbody>
+                 </table>
+             </div>
+             <div class="cart-btn">
+                 <div class="cart-btn-left">
+                     <a href="{% url 'product:product_list' %}" class="btn btn-dark btn-hover-primary rounded-pill">Continue Shopping</a>
+                 </div>
+                 <div class="cart-btn-right">
+                     <a class="btn btn-outline-dark btn-hover-dark rounded-pill" data-bs-toggle="modal" data-bs-target="#clear_cart_modal">Clear Cart</a>
+                     <a href="{% url 'cart:item_list' %}" class="btn btn-outline-dark btn-hover-dark rounded-pill">Update Cart</a>
+                 </div>
+             </div>
+         </div>
+         <!-- Cart End -->
+
+
+         <form name="selected_fee_form" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="select_shipment_fee" name="select_shipment_fee">
+         <div class="row">
+             <div class="col-lg-4">
+                 <!-- Cart Shipping Start -->
+                 <div class="cart-shipping">
+                     <div class="cart-title">
+                         <h4 class="title">Coupon Code</h4>
+                         <p>Enter your coupon code if you have one.</p>
+                     </div>
+                     <div class="cart-form">
+                         <form action="#">
+                             <div class="single-form">
+                                 <input type="text" placeholder="Enter your coupon code..">
+                             </div>
+                             <div class="single-form">
+                                 <button class="btn btn-dark btn-hover-primary rounded-pill">Apply Coupon</button>
+                             </div>
+                         </form>
+                     </div>
+                 </div>
+                 <!-- Cart Shipping End -->
+             </div>
+             <div class="col-lg-4">
+               <!-- Cart Shipping Start -->
+               <div class="cart-shipping">
+                   <div class="cart-title">
+                       <h4 class="title">Calculate Shipping</h4>
+                       <p>Estimate your shipping fee *</p>
+                   </div>
+                   <div class="cart-form">
+                       <p>Calculate shipping </p>
+                       <form action="#">
+                           <div class="single-select2">
+                               <div class="form-select2">
+                                   <select id="region_select" name="region_select" onchange="getSelectVal(this)" class="select2">
+                                       <option value="no_selection">Select a region</option>
+                                       {% for region in shipment_method_list %}
+                                       <option value="{{ region.shipment_fee }}" {% ifequal cart_data.queryset.first.cart.shipment_fee region.shipment_fee %}selected{% endifequal %}>
+                                        {{ region.region }} </option>
+                                       {% endfor %}
+                                   </select>
+                               </div>
+                           </div>
+                       </form>
+                   </div>
+               </div>
+               <!-- Cart Shipping End -->
+           </div>
+             <div class="col-lg-4">
+                 <!-- Cart Totals Start -->
+                 <div class="cart-totals">
+                     <div class="cart-title">
+                         <h4 class="title">Cart totals</h4>
+                     </div>
+                     <div class="cart-total-table">
+                         <table class="table">
+                             <tbody>
+                                 <tr>
+                                     <td>
+                                         <p class="value">Subtotal</p>
+                                     </td>
+                                     <td>
+                                         <p id="cart_summary_subtotal" class="price">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.subtotal }}{% else %}$0{% endif %}</p>
+                                     </td>
+                                 </tr>
+                                 <tr>
+                                     <td>
+                                         <p class="value">Shipping</p>
+                                     </td>
+                                     <td>
+                                        <p id="shipping_price" class="price">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.shipment_fee }}{% else %}$0{% endif %}</p>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                   <td>
+                                       <p class="value">Discount</p>
+                                   </td>
+                                   <td>
+                                       <p id="cart_summary_discount" class="price">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.discount_total }}{% else %}$0{% endif %}</p>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td>
+                                       <p class="value">Quantity</p>
+                                   </td>
+                                   <td>
+                                       <p id="cart_summary_item_number" class="price">{% if cart_data.queryset.first %}{{ cart_data.queryset.first.cart.current_item_num }}{% else %}0{% endif %}</p>
+                                   </td>
+                                </tr>
+                                 <tr>
+                                     <td>
+                                         <p class="value">Total</p>
+                                     </td>
+                                     <td>
+                                         <p id="cart_summary_total" class="price">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.total }}{% else %}$0{% endif %}</p>
+                                     </td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="cart-total-btn d-grid">
+                        
+                         <button id="proceed_to_checkout_button" class="btn btn-dark btn-hover-primary rounded-pill">Proceed To Checkout</button>
+                        
+                     </div>
+                 </div>
+                 <!-- Cart Totals End -->
+             </div>
+         </div>
+         </form>
+     </div>
+ </div>
+ <!-- Cart End -->
+
+ {% else %}
+ <!-- Cart Start -->
+ <div class="section section-padding-02 mt-n2">
+    <div class="container">
+        <!-- empty cart Start -->
+        <div class="empty-cart text-center">
+            <h2 class="empty-cart-title">There are no more items in your cart</h2>
+            <div class="empty-cart-img">
+                <img src="{%  static 'images/cart.png' %}" alt="">
+            </div>
+            <p>Your cart is currently empty!</p>
+            <a href="{% url 'product:product_list' %}" class="btn btn-hover-dark btn-primary rounded-pill"><i class="fa fa-angle-left"></i> Continue browsing</a>
+        </div>
+        <!-- empty cart End -->
+    </div>
+</div>
+<!-- Cart End -->
+ {% endif %}
+
+ <div class="modal" id="clear_cart_modal" tabindex="-1">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title">Modal title</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+           <p>Do you realy want to clear cart</p>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+           <button type="button" onclick="clearCart()" class="btn btn-primary">Clear Cart</button>
+         </div>
+       </div>
+     </div>
+   </div>
+ 
+
+
+
+{% endblock content %}
+
+{% block script %}
+{% include 'product/js_file/update_cart_script.html' %}
+<script> var clearCartUrl = '{% url "cart:clear_cart" %}';</script>
+<script> var delelteCartItemurl = '{% url "product:delete_seo_item" %}';</script>
+<script>
+
+    function deleteItem(itemId) {
+        const formData = new FormData();
+     formData.append('csrfmiddlewaretoken', theToken);
+     formData.append('the_id', itemId);
+     formData.append('operation', 'cart_item');
+     $.ajax({
+         type: 'POST',
+         url: delelteCartItemurl,
+         data: formData,
+         success: function(response) {
+           console.log('value of response');
+           console.log(response);
+           if (!response.is_error) {
+               console.log('no error bro')
+               console.log(response.cart_data)
+               $('#product_row_' + itemId).remove()
+               $('#cart_item_' + itemId).remove()
+            //    update cart summary
+               $('#cart_item_num').html(response.current_item_num)
+               $('#cart_current_item').html(response.current_item_num)
+               $('#cart_subtotal').html('$' + response.subtotal)
+               $('#cart_shipment').html('$' + response.shipment_fee)
+               $('#cart_total').html('$' + response.total)
+               $('#cart_discount').html('$' + response.discount_total)
+            //    cart summary
+               $('#cart_summary_subtotal').text('$' + response.subtotal)
+               $('#shipping_price').text('$' + response.shipment_fee)
+               $('#cart_summary_discount').text('$' + response.discount_total)
+               $('#cart_summary_item_number').text(response.current_item_num)
+               $('#cart_summary_total').text('$' + response.total)
+                
+           } else {
+             console.log('do not do anything');
+           }
+         },
+         error: function(error) {
+           console.log('error submitting by modal ================', error);
+         },
+         cache: false,
+         contentType: false,
+         processData: false,
+       });
+    }
+
+    $('#proceed_to_checkout_button').click(function() {
+        const theSelectVal = document.getElementById('region_select').value;
+        document.getElementById('select_shipment_fee').value = theSelectVal;
+        console.log('value fo selected theSelectVal ')
+        console.log(theSelectVal)
+    })
+    
+
+var cartTable = document.getElementById('cart_table')
+var productMiniCart = document.getElementById('product_mini_list')
+function clearCart(cartId) {
+     $('#clear_cart_modal').appendTo("body").modal('hide');
+     const formData = new FormData();
+     formData.append('csrfmiddlewaretoken', theToken);
+     $.ajax({
+         type: 'POST',
+         url: clearCartUrl,
+         data: formData,
+         success: function(response) {
+           console.log('value of response');
+           console.log(response);
+           if (!response.is_error) {
+               //  show empty message
+                $('#cart_table').children().remove()
+                $('#product_mini_list').children().remove()
+                cartTable.insertAdjacentHTML('beforeend', '<h5 class="text-center">No Item In The Cart</h5>');
+                productMiniCart.insertAdjacentHTML('beforeend', '<h5 id="no_item_in_cart" class="text-center">No Item In Cart</h5>');
+               //  clear summaries
+               $('#cart_item_num').html(0)
+               $('#cart_current_item').html(0)
+               $('#cart_subtotal').html('$' + 0)
+               $('#cart_total').html('$' + 0)
+               $('#cart_discount').html('$' + 0)
+               // cart summary
+               $('#cart_summary_subtotal').text('$' + 0)
+               $('#shipping_price').text('$' + 0)
+               $('#cart_summary_discount').text('$' + 0)
+               $('#cart_summary_item_number').text(0)
+               $('#cart_summary_total').text('$' + 0)
+                
+           } else {
+             console.log('do not do anything');
+           }
+         },
+         error: function(error) {
+           console.log('error submitting by modal ================', error);
+         },
+         cache: false,
+         contentType: false,
+         processData: false,
+       });
+     }
+
+
+
+     function getSelectVal(val) {
+         
+          if(this.value !== 'no_selection') {
+            document.getElementById('select_shipment_fee').value = val.value;
+               $('#shipping_price').text('$' + val.value)
+               $('#cart_shipment').text('$' + val.value)
+               var totalVal = $('#cart_summary_subtotal').text()
+               let caluclatedTotal = Number(totalVal.slice(1)) - Number(val.value)
+               $('#cart_summary_total').text('$' + caluclatedTotal)
+               $('#cart_total').text('$' + caluclatedTotal)
+          } else {
+            document.getElementById('select_shipment_fee').value = '0';
+          }
+          console.log('value of val')
+          console.log(val.value)
+     }
+</script>
+
+{% endblock script %}
+

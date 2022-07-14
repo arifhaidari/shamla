@@ -1,0 +1,89 @@
+
+
+<!-- Brand Start -->
+<div class="section section-padding">
+     <div class="container">
+          <div class="brand-active swiper-container">
+               <div class="swiper-wrapper">
+                    {% for brand in brands %}
+                    <div class="swiper-slide single-brand">
+                         <img src="{{ brand.logo.url }}" alt="">
+                    </div>
+                    {% endfor %}
+               </div>
+          </div>
+     </div>
+</div>
+<!-- Brand End -->
+<!-- Newsletter Start -->
+<div class="section section-padding-02">
+     <div class="container">
+          {% if not is_newsletter %}
+          <div class="newsletter-wrapper" style="background-image: url(/static/images/newsletter.jpg);">
+               <div class="newsletter-title">
+                    <h2 class="title">Subscribe our <br> Newsletter</h2>
+               </div>
+               <div class="newsletter-form">
+                    <form id="newsletter_form" method="post">
+                         {% csrf_token %}
+                         <input type="email" id="email" name="email" placeholder="Enter your email here...">
+                         <small id="email_error" style="display: none;color: red;"></small>
+                         <button id="newsletter_button">Send <span class="material-icons">arrow_right_alt</span></button>
+                    </form>
+               </div>
+          </div>
+          {% endif %}
+     </div>
+</div>
+<!-- Newsletter End -->
+
+<script>var isNewletter = '{{ is_newsletter }}';</script>
+<script>
+     if(!isNewletter){
+         var isSaveError = false;
+    const newletterForm = document.getElementById('newsletter_form');
+    const newsletterButton = document.getElementById('newsletter_button');
+const email = document.getElementById('email');
+
+
+// Show fields error 
+const emailError = document.getElementById('email_error');
+
+newsletterButton.addEventListener('click', function () {
+     console.log('register_button got pressed')
+     newletterForm.addEventListener('submit', (e) => {
+          console.log('the save change button got called');
+
+          if (email.value.trim() === '' || email.value.trim() == null) {
+               setError(email, emailError, 'Email field is emtpy')
+          } else {
+               if (!isNaN(email.value.trim())) {
+                    setError(email, emailError, 'Email must not be digits')
+               }
+               if (!validateEmail(email.value)) {
+                    setError(email, emailError, 'Email is not valid')
+               }
+          }
+
+          if (isSaveError) {
+               console.log('yes there is error')
+               e.preventDefault()
+               isSaveError = false
+          }
+     })
+})
+
+function setError(inputField, errorArea, errorMessage) {
+     isSaveError = true
+     inputField.style.border = 'dashed 2px red'
+     errorArea.innerHTML = errorMessage
+     errorArea.style.display = 'block'
+}
+
+function validateEmail(email) {
+     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+     return re.test(String(email).toLowerCase());
+}
+}
+
+</script>

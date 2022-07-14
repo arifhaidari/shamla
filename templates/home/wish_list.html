@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Wishlist{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Wishlist</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'product:product_list' %}">Products</a></li>/
+                 <li class="breadcrumb"><a>WishList</a></li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+ {% if object_list|length != 0 %}
+
+ <!-- Cart Start -->
+ <div class="section section-padding-02 mt-n1">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            <br>
+        </div>
+        <!-- Checkout Info End -->
+         <!-- Cart Start -->
+         <div class="cart-wrapper">
+             <div class="cart-table table-responsive">
+                 <table class="table">
+                     <thead>
+                         <tr>
+                             <th class="product-image">Image</th>
+                             <th class="product-name">Product Name</th>
+                             <th class="product-quantity">Quantity</th>
+                             <th class="product-price">Discount</th>
+                             <th class="product-price">Price</th>
+                             <th class="product-price">Add To Cart</th>
+                             <th class="product-action">Action</th>
+                         </tr>
+                     </thead>
+                     <tbody id="cart_table">
+                          {% if object_list %}
+                          {% for item in object_list %}
+                         <tr id="item_row_{{ item.id }}">
+                             <td class="product-image">
+                                 <img style="width: 98px;height: 110px;" src="{{ item.product.productimages_set.first.image.url }}" alt="">
+                             </td>
+                             <td class="product-name">
+                                 <a class="name" href="{{ item.product.get_absolute_url }}">{{ item.product.title|truncatechars:40 }}</a><br>
+                                 <small><strong>Size:</strong> {% if item.size %}{{ item.size.name }}{% else %}Free Size{% endif %} </small><br>
+                                 <small><strong>Color:</strong> {% if item.color %}{{ item.color.name }}{% else %}No Color{% endif %} </small>
+                             </td>
+                             <td class="product-quantity">
+                                 <div class="product-quantity d-inline-flex">
+                                     <button type="button" class="sub">-</button>
+                                     <input id="quantity_{{ item.id }}" type="text" value="1"/>
+                                     <button type="button" class="add">+</button>
+                                 </div>
+                             </td>
+                             <td class="product-price">
+                                 <div class="product-price">
+                                     <span id="" class="">{% if item.product.discount_percentage %}{{ item.product.discount_percentage }}{% else %}0{% endif %}%</span>
+                                 </div>
+                             </td>
+                             <td class="product-price">
+                                 <div class="product-price">
+                                      <span class="old-price">{% if item.product.old_price %}${{ item.product.old_price }}{% endif %}</span>
+                                     <span id="" class="sale-price">${{ item.product.price }}</span>
+                                 </div>
+                             </td>
+                             <td class="product-add-cart">
+                                   <a onclick="addToCart('{{ item.id }}')" class="btn btn-dark btn-hover-primary rounded-pill">Add to Cart</a>
+                              </td>
+                             <td class="product-action">
+                                 <a class="close" onclick="deleteWishListItem('{{ item.id }}')" ><span class="material-icons">clear</span></a>
+                             </td>
+                         </tr>
+                         {% endfor %}
+                         {% else %}
+                         <h5 class="text-center">No Item In The Cart</h5>
+                         <br>
+                         <br>
+                         {% endif %}
+                     </tbody>
+                 </table>
+             </div>
+         </div>
+         <!-- Cart End -->
+
+
+        
+     </div>
+ </div>
+ <!-- Cart End -->
+
+ {% else %}
+ <!-- Cart Start -->
+ <div class="section section-padding-02 mt-n2">
+    <div class="container">
+        <!-- empty cart Start -->
+        <div class="empty-cart text-center">
+            <h2 class="empty-cart-title">There are no more items in your wish list</h2>
+            <div class="empty-cart-img">
+                <img src="{%  static 'images/cart.png' %}" alt="">
+            </div>
+            <p>Your wish list is currently empty!</p>
+            <a href="{% url 'product:product_list' %}" class="btn btn-hover-dark btn-primary rounded-pill"><i class="fa fa-angle-left"></i> Continue browsing</a>
+        </div>
+        <!-- empty cart End -->
+    </div>
+</div>
+<!-- Cart End -->
+ {% endif %}
+
+ 
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script>var wishToken = '{{ csrf_token }}';</script>
+<script>var theUri = '{{ request.build_absolute_uri }}';</script>
+<script> var delelteCartItemurl = '{% url "product:delete_seo_item" %}';</script>
+<script>
+
+const productMiniList = document.getElementById('product_mini_list')
+
+function addToCart(wishId) {
+     console.log('inside the add to cart ')
+     console.log(wishId)
+     var itemQuantity = document.getElementById('quantity_' + wishId)
+     console.log('value fo wishToken')
+     console.log(wishToken)
+     const formData = new FormData();
+     formData.append('csrfmiddlewaretoken', wishToken);
+     formData.append('wish_id', wishId);
+     formData.append('quantity', itemQuantity.value);
+     $.ajax({
+         type: 'POST',
+         url: theUri,
+         data: formData,
+         success: function(response) {
+           console.log('value of response');
+           console.log(response);
+           if (!response.is_error) {
+               $('#item_row_' + wishId).remove()
+               // 
+                console.log('no error at all')
+                $('#cart_item_num').html(response.cart_item_num)
+               $('#cart_current_item').html(response.cart_item_num)
+               $('#cart_subtotal').html('$' + response.cart_subtotal)
+               $('#cart_total').html('$' + response.cart_total)
+               $('#cart_discount').html('$' + response.cart_discount)
+               
+               if(response.is_new_product == true) {
+                   console.log('insid the is it true')
+                   $("#no_item_in_cart").css("display", "none");
+                  var theOption = `<li>
+                                    <div class="single-cart-item">
+                                        <div class="cart-thumb">
+                                            <a id="product_image_thumb" href="` + response.the_url + `"><img style="width: 98px;height: 98px;" src="` + response.image_url + `" alt="Product Image"></a>
+                                        </div>
+                                        <div class="cart-item-content">
+                                            <h6 class="product-name">` + response.product_title + `</h6>
+                                            <span class="product-price">$` + response.product_price + `</span>
+                                            <div class="attributes-content">
+                                                <span><strong>Size:</strong> ` + response.product_size + ` </span>
+                                                <span><strong>Color:</strong> ` + response.product_color + ` </span>
+                                                <span id="cart_product_quantity_` + response.product_id + `"><strong>Quantity:</strong> ` + response.product_quantity + ` </span>
+                                            </div>
+                                            <a href="#" class="remove-cart"><i class="icon-x"></i></a>
+                                        </div>
+                                    </div>
+                                </li>`;
+                        // productMiniList.append(theOption)
+                        productMiniList.insertAdjacentHTML('beforeend', theOption);
+                            } else {
+                                console.log('isndie the else')
+                                $('#cart_product_quantity_' + response.product_id).html('<strong>Quantity:</strong> ' + response.product_quantity)
+               }
+                
+           } else {
+             console.log('do not do anything');
+           }
+         },
+         error: function(error) {
+           console.log('error submitting by modal ================', error);
+         },
+         cache: false,
+         contentType: false,
+         processData: false,
+       });
+     }
+
+// remove item from wish list
+function deleteWishListItem(itemId) {
+     const formData = new FormData();
+     formData.append('csrfmiddlewaretoken', wishToken);
+     formData.append('the_id', itemId);
+     formData.append('operation', 'wishlist_item');
+     $.ajax({
+         type: 'POST',
+         url: delelteCartItemurl,
+         data: formData,
+         success: function(response) {
+           console.log('value of response');
+           console.log(response);
+           if (!response.is_error) {
+               console.log('no error bro')
+               $('#item_row_' + itemId).remove()
+                
+           } else {
+             console.log('do not do anything');
+           }
+         },
+         error: function(error) {
+           console.log('error submitting by modal ================', error);
+         },
+         cache: false,
+         contentType: false,
+         processData: false,
+       });
+    }
+
+     
+</script>
+
+{% endblock script %}
+

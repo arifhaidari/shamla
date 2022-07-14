@@ -1,0 +1,118 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Slider{% endblock title %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Update Slider</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'marketing:admin_slider_list' %}">Sliders</a></li>
+              <li class="breadcrumb-item active">Update Slider</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+     <br>
+     <br>
+     <br>
+ 
+     <!-- Main content -->
+     <section class="content">
+       <div class="container-fluid justify-content-center">
+         <div class="row justify-content-center align-middle">
+           <div class="col-md-6 align-self-center">
+ 
+             <!-- /.card -->
+            <div class="card card-info">
+               <div class="card-header">
+                 <h3 class="card-title">Update Slider</h3>
+               </div>
+               <!-- /.card-header -->
+               <!-- form start -->
+               <!-- form start -->
+               <form class="form-horizontal" id="slider_form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+             <div class="card-body">
+               <div class="form-group row">
+                 <label for="" class="col-sm-2 col-form-label">Title</label>
+                 <div class="col-sm-10">
+                   <input type="text" maxlength="25" class="form-control" value="{{ object.title }}" id="title" name="title" placeholder="Enter Title">
+                 </div>
+               </div>
+               <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label">Subtitle</label>
+                <div class="col-sm-10">
+                  <input type="text" maxlength="25" class="form-control" value="{{ object.subtitle }}" id="subtitle" name="subtitle" placeholder="Enter Subtitle">
+                </div>
+              </div>
+              <small>Note: if you want preserve previous picture then do not upload any pic</small>
+              <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label">Image</label>
+                <div class="col-sm-10">
+                  <input type="file" accept="image/*" class="form-control" id="image" name="image" placeholder="Insert Image">
+                </div>
+              </div>
+               <div class="form-group row">
+                 <div class="offset-sm-2 col-sm-10">
+                   <div class="form-check">
+                     <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
+                     <label class="form-check-label" for="exampleCheck2">Active</label>
+                   </div>
+                 </div>
+               </div>
+
+               {% if messages %}
+               {% for message in messages %}
+                     {% if message.tags  == 'error' %}
+                    <div class="form-group row">
+                     <label for="" class="col-sm-2 col-form-label"></label>
+                     <div class="col-sm-10">
+                          <label style="color: red;">{{ message }}</label>
+                     </div>
+                   </div>
+                    {% else %}
+                    <div class="form-group row">
+                     <label for="" class="col-sm-2 col-form-label"></label>
+                     <div class="col-sm-10">
+                          <label style="color: black;">{{ message }}</label>
+                     </div>
+                   </div>
+                    {% endif %}
+          
+               {% endfor %}
+               {% endif %}
+             </div>
+             <!-- /.card-body -->
+             <div class="card-footer">
+               <a href="{% url 'marketing:admin_slider_list' %}" class="btn btn-outline-secondary float-left" >Back</a> 
+              <button type="submit" class="btn btn-info float-right">Submit</button> 
+             </div>
+             <!-- /.card-footer -->
+           </form>
+             </div>
+             <!-- /.card -->
+           </div>
+           <!-- /.col -->
+         </div>
+         <!-- /.row -->
+       </div>
+       <!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block script %}
+
+{% endblock script %}

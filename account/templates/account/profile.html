@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">My Account</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb active">Profile</li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+
+
+ <!-- My Account Start -->
+ <div class="section section-padding-02 mt-n6">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <!-- Checkout Info End -->
+         <div class="row">
+             <div class="col-lg-3 col-md-4">
+                 <!-- My Account Menu Start -->
+                 <div class="my-account-menu mt-6">
+                     <ul class="nav account-menu-list flex-column">
+                         <li>
+                             <a class="active" data-bs-toggle="pill" href="#pills-dashboard"><i class="fa fa-tachometer"></i> Dashboard</a>
+                         </li>
+                         <li>
+                             <a data-bs-toggle="pill" href="#pills-order"><i class="fa fa-shopping-cart"></i> Order</a>
+                         </li>
+                         <li>
+                             <a data-bs-toggle="pill" href="#pills-payment"><i class="fa fa-credit-card"></i> Payment Method</a>
+                         </li>
+                         <li>
+                             <a data-bs-toggle="pill" href="#pills-address"><i class="fa fa-map-marker"></i> Address</a>
+                         </li>
+                         <li>
+                             <a data-bs-toggle="pill" href="#pills-account"><i class="fa fa-user"></i> Account Details</a>
+                         </li>
+                         <li>
+                             <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
+                         </li>
+                     </ul>
+                 </div>
+                 <!-- My Account Menu End -->
+             </div>
+
+             <div class="col-lg-9 col-md-8">
+                 <!-- Tab content start -->
+                 <div class="tab-content my-account-tab" id="pills-tabContent">
+                     <div class="tab-pane fade show active" id="pills-dashboard">
+                         <div class="my-account-dashboard account-wrapper mt-5">
+                             <h4 class="account-title">Dashboard</h4>
+                             <div class="welcome-dashboard">
+                                 <p>Hello, {{ request.user }}</p>
+                             </div>
+                             <p>From your account dashboard. you can easily check & view your recent orders, manage your shipping and billing addresses and edit your password and account details.</p>
+                         </div>
+                     </div>
+
+                     <div class="tab-pane fade" id="pills-order">
+                         <div class="my-account-order account-wrapper mt-6">
+                             <h4 class="account-title">Orders</h4>
+                             <div class="account-table text-center table-responsive">
+                                 <table class="table">
+                                     <thead>
+                                         <tr>
+                                             <th class="no">No</th>
+                                             <th class="name">Order</th>
+                                             <th class="date">Date</th>
+                                             <th class="status">Status</th>
+                                             <th class="total">Shipping</th>
+                                             <th class="total">Discount</th>
+                                             <th class="total">Total</th>
+                                             <th class="action">Action</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         {% if orders %}
+                                         {% for order in orders %}
+                                         <tr>
+                                             <td>{{ forloop.counter }}</td>
+                                             <td>{{ order.order_id }}</td>
+                                             <td>{{ order.updated|date:"M d, Y"  }}</td>
+                                             <td>{{ order.status }}</td>
+                                             <td>${{ order.cart.shipment_fee }}</td>
+                                             <td>${{ order.cart.discount_total }}</td>
+                                             <td>${{ order.cart.total }}</td>
+                                             <td><a href="{% url 'billing:order_summary' order.order_id %}">View</a></td>
+                                         </tr>
+                                         {% endfor %}
+                                         {% else %}
+                                         <div class="my-account-payment account-wrapper mt-6">
+                                            <h4 class="account-title">Order</h4>
+                                            <p>No Order Has Been Placed Yet</p>
+                                        </div>
+                                         {% endif %}
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="tab-pane fade" id="pills-payment">
+                         <div class="my-account-payment account-wrapper mt-6">
+                             <h4 class="account-title">Payment Method</h4>
+                             <p>You Can't Saved Your Payment Method yet.</p>
+                         </div>
+                     </div>
+
+                     <div class="tab-pane fade" id="pills-address">
+                         <div class="my-account-address account-wrapper">
+                             <div class="row">
+                                 {% if addresses %}
+                                 {% for address in addresses %}
+                                 <div class="col-md-6 mt-6">
+                                     <h4 class="account-title">{{ address.address_type }} Address</h4>
+                                     <div class="account-address">
+                                         <h6 class="name">{{ address.full_name }}</h6>
+                                         <p>{{ address.street }}, {% if address.district %}{{ address.district }}{% endif %}
+                                             <br>{{ address.city }}, {{ address.country }}</p>
+                                         <p>Phone: {{ address.phone }} <br>Email: {{ address.email }}</p>
+                                         <a class="btn btn-primary btn-hover-dark" href="#"><i class="fa fa-edit"></i> Edit Address</a>
+                                     </div>
+                                 </div>
+                                 {% endfor %}
+                                 {% else %}
+                                 <div class="my-account-payment account-wrapper mt-6">
+                                    <h4 class="account-title">Address</h4>
+                                    <p>No Address Available</p>
+                                </div>
+                                 {% endif %}
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="tab-pane fade" id="pills-account">
+                         <div class="my-account-details account-wrapper mt-6">
+                             <h4 class="account-title">Account Details</h4>
+
+                             <div class="account-details">
+                                <form method="post" id="update_detail_form">
+                                    {% csrf_token %}
+                                 <div class="row">
+                                     <input type="hidden" name="email" value="{{ request.user.email }}">
+                                     <div class="col-md-6">
+                                         <div class="single-form">
+                                             <label class="form-label">Full Name</label>
+                                             <input type="text" id="full_name" name="full_name" value="{{ request.user.full_name }}">
+                                             <small id="full_name_error" style="display: none;color: red;"></small>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-6">
+                                        <div class="single-form">
+                                            <label class="form-label">Email address</label>
+                                            <input type="text" name="email" value="{{ request.user.email }}" disabled>
+                                        </div>
+                                     </div>
+                                     <div class="col-md-12">
+                                         <div class="single-form">
+                                             <h5 class="title">Password change</h5>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-12">
+                                         <div class="single-form">
+                                             <label class="form-label">Current Password</label>
+                                             <input type="password" id="current_pass" name="current_pass">
+                                             <small id="current_pass_error" style="display: none;color: red;"></small>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <div class="single-form">
+                                             <label class="form-label">New Password</label>
+                                             <input type="password" id="new_pass" name="new_pass">
+                                             <small id="new_pass_error" style="display: none;color: red;"></small>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <div class="single-form">
+                                             <label class="form-label">Confirm Password</label>
+                                             <input type="password" id="confirm_pass" name="confirm_pass">
+                                             <small id="confirm_pass_error" style="display: none;color: red;"></small>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <div class="single-form">
+                                             <button id="update_detail_button" class="btn btn-primary btn-hover-dark rounded-pill">Save Change</button>
+                                         </div>
+                                     </div>
+                                    </div>
+                                </form>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <!-- Tab content End -->
+             </div>
+         </div>
+     </div>
+ </div>
+ <!-- My Account End -->
+
+
+{% endblock content %}
+{% block script %}
+<script>
+    // Get all fields
+ var  isSaveError = false
+const updateDetailForm = document.getElementById('update_detail_form');
+const fullName = document.getElementById('full_name');
+const currentPass = document.getElementById('current_pass');
+const newPass = document.getElementById('new_pass');
+const confirmPass = document.getElementById('confirm_pass');
+
+    // Show fields error 
+const fullNameError = document.getElementById('full_name_error');
+const currentPassError = document.getElementById('current_pass_error');
+const newPassError = document.getElementById('new_pass_error');
+const confirmPassError = document.getElementById('confirm_pass_error');
+
+$("#update_detail_button").on('click', function () {
+     console.log('register_button got pressed')
+     updateDetailForm.addEventListener('submit', (e) => {
+          console.log('the save change button got called');
+
+          if (fullName.value.trim() === '' || fullName.value.trim() == null) {
+               setError(fullName, fullNameError, 'Name field is emtpy');
+          } else {
+               if (!isNaN(fullName.value.trim())) {
+                    setError(fullName, fullNameError, 'Name must not be digits');
+               }
+          }
+
+          if (currentPass.value.trim() === '' || currentPass.value.trim() == null) {
+               setError(currentPass, currentPassError, 'Current Password field is emtpy')
+          }
+
+          if (newPass.value.trim() === '' || newPass.value.trim() == null) {
+               setError(newPass, newPassError, 'New Password field is emtpy')
+          }
+
+          if (confirmPass.value.trim() === '' || confirmPass.value.trim() == null) {
+               setError(confirmPass, confirmPassError, 'Please confirm your password')
+          }
+
+          if (newPass.value.trim() !== '' && newPass.value.trim() != null && confirmPass.value.trim() !== '' && confirmPass.value.trim() != null) {
+               if (newPass.value.trim() !== confirmPass.value.trim()) {
+                    setError(confirmPass, confirmPassError, 'Passwords do not match')
+               } else {
+                    if (newPass.value.length < 3 || newPass.value.length > 20) {
+                         setError(newPass, newPassError, 'Password must be between 3 and 20 characters')
+                    }
+               }
+          }
+
+          if (isSaveError) {
+               console.log('yes there is error')
+               e.preventDefault()
+               isSaveError = false
+          }
+     })
+})
+
+function setError(inputField, errorArea, errorMessage) {
+     isSaveError = true
+     inputField.style.border = 'dashed 2px red'
+     errorArea.innerHTML = errorMessage
+     errorArea.style.display = 'block'
+}
+</script>
+{% endblock script %}

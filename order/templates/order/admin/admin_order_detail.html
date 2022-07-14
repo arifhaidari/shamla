@@ -1,0 +1,199 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Order Detail{% endblock title %}
+
+{% block content %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Order Detail</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+               <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+               <li class="breadcrumb-item active">Order</li>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+ 
+     <section class="content">
+       <div class="container-fluid">
+         <div class="row">
+           <div class="col-12">
+             <div class="callout callout-info">
+               <h5><i class="fas fa-info"></i> Note:</h5>
+               {% if object.order_note %}{{ object.order_note }}{% else %}No Comment In This Order{% endif %}
+             </div>
+ 
+ 
+             <!-- Main content -->
+             <div class="invoice p-3 mb-3">
+               <!-- title row -->
+               <div class="row">
+                 <div class="col-12">
+                   <h4>
+                     <i class="fas fa-globe"></i> Shamla Atelier
+                     <small class="float-right">Placed Date: {{ object.updated|date:"M, d, Y" }}</small>
+                   </h4>
+                 </div>
+                 <!-- /.col -->
+               </div>
+               <!-- info row -->
+               <div class="row invoice-info">
+                 <div class="col-sm-4 invoice-col">
+                   Billing Address
+                   <address>
+                     <strong>{{ object.billing_address.full_name }}</strong><br>
+                     {{ object.billing_address.city }}, {{ object.billing_address.country }}<br>
+                     {% if object.billing_address.apartment %}{{ object.billing_address.apartment }}, {% endif %}{{ object.billing_address.street }}<br>
+                     Zip Code: {{ object.billing_address.zipcode }}<br>
+                     Phone: {{ object.billing_address.phone }}<br>
+                     Email: {{ object.billing_address.email }}
+                   </address>
+                 </div>
+                 <!-- /.col -->
+                 <div class="col-sm-4 invoice-col">
+                   Shipping Address
+                   {% if object.shipping_address %}
+                   <address>
+                    <strong>{{ object.shipping_address.full_name }}</strong><br>
+                    {{ object.shipping_address.city }}, {{ object.shipping_address.country }}<br>
+                    {% if object.shipping_address.apartment %}{{ object.shipping_address.apartment }}, {% endif %}{{ object.shipping_address.street }}<br>
+                    Zip Code: {{ object.shipping_address.zipcode }}<br>
+                    Phone: {{ object.shipping_address.phone }}<br>
+                    Email: {{ object.shipping_address.email }}
+                  </address>
+                  {% else %}
+                  <address>
+                       <strong>Billing & Shipping Addresses Are The Same</strong>
+                  </address>
+                  {% endif %}
+                 </div>
+
+                 <!-- /.col -->
+                <div class="col-sm-4 invoice-col">
+                    <b>Order #{{ object.order_id }}</b><br>
+                    <br>
+                    <b>Status:</b> {{ object.status }}<br>
+                  </div>
+                  <!-- /.col -->
+               </div>
+               <!-- /.row -->
+ 
+               <!-- Table row -->
+               <div class="row">
+                 <div class="col-12 table-responsive">
+                   <table class="table table-striped">
+                     <thead>
+                     <tr>
+                       <th>Qty</th>
+                       <th>Product</th>
+                       <th>Size</th>
+                       <th>Color</th>
+                       <th>Price</th>
+                       <th>Total Discount</th>
+                       <th>Subtotal</th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     {% for item in object.cart.cartproduct_set.all %}
+                     <tr>
+                       <td>{{ item.product_quantity }}</td>
+                       <td>{{ item.product.title|truncatechars:30 }}</td>
+                       <td>{% if item.size %}{{ item.size }}{% else %}Free Size{% endif %}</td>
+                       <td>
+                            {% if item.color %}
+                            {{ item.color }}
+                            {% else %}
+                            No Color
+                            {% endif %}
+                       </td>
+                       <td>{{ item.product_price }}</td>
+                       <td>{{ item.total_discount }}</td>
+                       <td>{{ item.total_price }}</td>
+                     </tr>
+                     {% endfor %}
+                     </tbody>
+                   </table>
+                 </div>
+                 <!-- /.col -->
+               </div>
+               <!-- /.row -->
+ 
+               <div class="row">
+                 <!-- accepted payments column -->
+                 <div class="col-6">
+                   <p class="lead">Payment Methods:</p>
+                   <img src="{% static 'admin/dist/img/credit/visa.png' %}" alt="Visa">
+                   <img src="{% static 'admin/dist/img/credit/mastercard.png' %}" alt="Mastercard">
+                   <img src="{% static 'admin/dist/img/credit/american-express.png' %}" alt="American Express">
+                   <img src="{% static 'admin/dist/img/credit/paypal2.png' %}" alt="Paypal">
+ 
+                   <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                     Above payment methods are usual in payemnt of the orders <br>but this system can 
+                     accept any card which is known globally
+                   </p>
+                 </div>
+                 <!-- /.col -->
+                 <div class="col-6">
+                   <p class="lead">Order Summary</p>
+ 
+                   <div class="table-responsive">
+                     <table class="table">
+                       <tr>
+                         <th style="width:50%">Subtotal:</th>
+                         <td>${{ object.cart.subtotal }}</td>
+                       </tr>
+                       <tr>
+                         <th>Shipping:</th>
+                         <td>${{ object.cart.shipment_fee }}</td>
+                       </tr>
+                       <tr>
+                         <th>Discount:</th>
+                         <td>${{ object.cart.discount_total }}</td>
+                       </tr>
+                       <tr>
+                         <th>Quanity:</th>
+                         <td>{{ object.cart.current_item_num }}</td>
+                       </tr>
+                       <tr>
+                         <th>Total:</th>
+                         <td>${{ object.cart.total }}</td>
+                       </tr>
+                     </table>
+                   </div>
+                 </div>
+                 <!-- /.col -->
+               </div>
+               <!-- /.row -->
+ 
+               <!-- this row will not appear when printing -->
+               <div class="row no-print">
+                 <div class="col-12">
+                   <a href="" target="_blank" class="btn btn-success"><i class="fas fa-print"></i> Print</a>
+                   
+                   <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
+                     <i class="fas fa-download"></i> Generate PDF
+                   </button>
+                 </div>
+               </div>
+             </div>
+             <!-- /.invoice -->
+           </div><!-- /.col -->
+         </div><!-- /.row -->
+       </div><!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+{% endblock content %}
+{% block script %}
+
+{% endblock script %}

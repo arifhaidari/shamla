@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <title>{% block title %}Shamla{% endblock title %}</title>
+     {% include 'css.html' %}
+</head>
+<body>
+     {% include 'header.html' %}
+
+     {% block content %}{% endblock content %}
+
+
+     {% include 'footer.html' %}
+     {% include 'js.html' %}
+     {% block script %}{% endblock script %}
+</body>
+</html>
+
+

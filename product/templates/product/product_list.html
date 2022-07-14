@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Products{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">
+                {{ category }}
+            </h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb active">Products</li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+
+ <!-- Shop Start -->
+ <div class="section section-padding-02 mt-n10">
+     <div class="container">
+         <!-- Shop Top Bar Start -->
+         <div class="shop-to-bar">
+             <div class="shop-top-left">
+                 <ul class="nav">
+                     <li><a class="active" data-bs-toggle="tab" href="#grid"><i class="fa fa-th"></i></a></li>
+                     <li><a data-bs-toggle="tab" href="#list"><i class="fa fa-list"></i></a></li>
+                 </ul>
+             </div>
+             <div class="shop-top-right">
+                 <select class="select" onchange="location = this.value;">
+                     <option value="" >Short by</option>
+                     <option value="?q=a_to_z">Name, A to Z</option>
+                     <option value="?q=z_to_a">Name, Z to A</option>
+                     <option value="?q=low_to_high">Price, low to high</option>
+                     <option value="?q=high_to_low">Price, high to low</option>
+                 </select>
+                 <select class="select" onchange="location = this.value;">
+                    <option value="" >Sort By Category</option>
+                    <option value="?q=all">All</option>
+                    {% for category in categories %}
+                    <option value="?q={{ category.id }}" >{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+             </div>
+         </div>
+         <!-- Shop Top Bar End -->
+
+         <!-- Tab Content Start -->
+         <div class="tab-content">
+             <div class="tab-pane fade show active" id="grid">
+                 <div class="row">
+                      {% if object_list %}
+                      {% for object in object_list %}
+                     <!-- selected one start -->
+                     <div class="col-lg-3 col-sm-6">
+                         <!-- Single-Product Start -->
+                                        <div class="swiper-slide">
+                                             <!-- Single-Product Start -->
+                                             <div class="single-product">
+                                                  <div class="product-image">
+                                                       <a href="{{ object.get_absolute_url }}">
+                                                            <img src="{{ object.productimages_set.first.image.url }}"
+                                                                 alt="product">
+                                                            <img class="hover-image"
+                                                                 src="{{ object.productimages_set.last.image.url }}"
+                                                                 alt="product">
+                                                       </a>
+                                                       {% if object.discount_percentage %}
+                                                       <span class="product-label percentage">-{{ object.discount_percentage }}%</span>
+                                                       {% endif %}
+                                                  </div>
+                                                  <div class="product-content">
+                                                       <div class="product-category-action">
+                                                            <div class="product-category">
+                                                                 <a href="{% url 'product:product_list' %}?q={% if object.category.all %}{{ object.category.first.id }}{% else %}all{% endif %}">{% if object.category.all %}{{ object.category.first.name }}{% else %}Default Category{% endif %}</a>
+                                                            </div>
+                                                            <div class="product-action">
+                                                                <!-- productId, operation, size, color -->
+                                                                 <a  onclick="updateCartItem('{{ object.id }}', 'add', '{{ object.size.first.id }}', '{{ object.color.first.id }}', 1, 'other')" class="action" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Add to Cart"><i
+                                                                           class="fa fa-shopping-cart"></i></a>
+                                                                 <a  class="action" onclick="addToWishList('{{ object.id }}', '{{ object.size.first.id }}', '{{ object.color.first.id }}')" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Compare"><i
+                                                                           class="fa fa-heart-o"></i></a>
+                                                            </div>
+                                                       </div>
+                                                       <h4 class="product-title"><a
+                                                                 href="{{ object.get_absolute_url }}">{{ object.title|truncatechars:20 }}</a></h4>
+                                                       <div class="product-price">
+                                                        <span class="old-price">{% if object.old_price %}${{ object.old_price }}{% endif %}</span>
+                                                            <span class="sale-price">${{ object.price }}</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <!-- Single-Product End -->
+                                        </div>
+                                        <!-- Single-Product End -->
+                                   </div>
+                                   {% endfor %}
+                                   {% else %}
+                                   <h4 class="text-center">There is no product</h4>
+                                   {% endif %}
+                     <!-- select one end -->
+                 </div>
+             </div>
+             <div class="tab-pane fade" id="list">
+                  {% if object_list %}
+                  {% for object in object_list %}
+                 <!-- Single-Product Start -->
+                 <div class="single-product product-list">
+                     <div class="product-image">
+                         <div class="product-slide swiper-container ">
+                             <div class="swiper-wrapper">
+                                  {% for img_object in object.productimages_set.all %}
+                                 <div class="swiper-slide">
+                                     <a href="{{ object.get_absolute_url }}">
+                                         <img src="{{ img_object.image.url }}" alt="product">
+                                     </a>
+                                 </div>
+                                 {% endfor %}
+                             </div>
+                             <!-- Add Pagination -->
+                             <div class="swiper-pagination"></div>
+                         </div>
+                     </div>
+                     <div class="product-content">
+                         <div class="product-category">
+                             <a href="{% url 'product:product_list' %}?q={{ object.category.first.id }}">{{ object.category.first.name }}</a>
+                         </div>
+                         <h4 class="product-title"><a href="{{ object.get_absolute_url }}">{{ object.title|truncatechars:60 }}</a></h4>
+                         <div class="product-price">
+                            <span class="old-price">{% if object.old_price %}${{ object.old_price }}{% endif %}</span>
+                             <span class="sale-price">${{ object.price }}</span>
+                             <span class="sale-price">{% if object.discount_percentage %} - {{ object.discount_percentage }}%{% endif %}</span>
+                         </div>
+                         <p> {% autoescape off %}
+                              <div class="unknown351">{{ object.description|truncatewords:50 }}</div>
+                              {% endautoescape %}
+                         </p>
+                         <div class="product-action">
+                              <br>
+                             <a class="action" data-tooltip="tooltip" onclick="updateCartItem('{{ object.id }}', 'add', '{{ object.size.first.id }}', '{{ object.color.first.id }}', 1, 'other')"  title="Add to Cart"><i class="fa fa-shopping-cart"></i></a>
+                             <a class="action" onclick="addToWishList('{{ object.id }}', '{{ object.size.first.id }}', '{{ object.color.first.id }}')" data-tooltip="tooltip" title="Compare"><i class="fa fa-heart-o"></i></a>
+                         </div>
+                     </div>
+                 </div>
+                 <!-- Single-Product End -->
+                 {% endfor %}
+                 {% else %}
+                 <h4 class="text-center">There is no product</h4>
+                 {% endif %}
+             </div>
+         </div>
+         <!-- Tab Content End -->
+
+         {% include 'pagination.html' with page_obj=page_obj %}
+     </div>
+ </div>
+ <!-- Shop End -->
+
+
+
+{% endblock content %}
+
+{% block script %}
+{% include 'product/js_file/update_cart_script.html' %}
+{% endblock script %}

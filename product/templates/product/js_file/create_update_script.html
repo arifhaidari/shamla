@@ -1,0 +1,197 @@
+<script>
+     console.log('whatttttttt-----////')
+     var isFormError = false;
+     // Product Info
+   const productForm = document.getElementById('product_form');
+   
+   const title = document.getElementById('title');
+   const price = document.getElementById('price');
+   const oldPrice = document.getElementById('old_price');
+   const discountPercentage = document.getElementById('discount_percentage');
+   const purchasePrice = document.getElementById('purchase_price');
+   const stock = document.getElementById('stock');
+   const productImageList = document.getElementById('product_images');
+   const description = document.getElementById('description');
+   
+   //////////////// Error displaying part //////////////////
+   const titleError = document.getElementById('title_error');
+   const priceError = document.getElementById('price_error');
+   const oldPriceError = document.getElementById('old_price_error');
+   const discountPercentageError = document.getElementById('discount_percentage_error');
+   const purchasePriceError = document.getElementById('purchase_price_error');
+   const stockError = document.getElementById('stock_error');
+   const productImageError = document.getElementById('product_image_error');
+   const descriptionError = document.getElementById('description_error');
+   
+   
+   $("#product_submit_button").on('click', function() {
+     console.log('saveChangeButton got pressed --------')
+     productForm.addEventListener('submit', (e) => {
+       console.log('the save change button got called======');
+   
+       if (title.value.trim() === '' || title.value.trim() == null) {
+         setProductError(title, titleError, 'Title field is emtpy');
+       } else {
+         if (!isNaN(title.value.trim())) {
+           setProductError(title, titleError, 'Title must not be digits');
+         }
+       }
+   
+       if (price.value.trim() === '' || price.value.trim() == null) {
+         setProductError(price, priceError, 'Price field is emtpy')
+       } else {
+         if (isNaN(price.value)) {
+           setProductError(price, priceError, 'Price should be numbers only')
+         } else if (price.value < 0) {
+           setProductError(price, priceError, 'Price should be positive numbers only')
+         }
+       }
+   
+       console.log('value fo purchasePrice')
+       console.log(purchasePrice.value)
+   
+       if (purchasePrice.value.trim() === '' || purchasePrice.value.trim() == null) {
+         console.log('there is issue in purchasePrice ---====++++')
+         console.log('value of purchasePrice')
+         setProductError(purchasePrice, purchasePriceError, 'Purchse Price field is emtpy')
+       } else {
+         if (isNaN(purchasePrice.value)) {
+           setProductError(purchasePrice, purchasePriceError, 'PurchasePrice should be numbers only')
+         } else if (purchasePrice.value < 0) {
+           setProductError(purchasePrice, purchasePriceError, 'Purchase Price should be positive numbers only')
+         }
+       }
+   
+       if (oldPrice.value.trim() != '' || oldPrice.value.trim() != null) {
+         if (isNaN(price.value)) {
+           setProductError(oldPrice, oldPriceError, 'Old Price should be numbers only')
+         } else if (parseFloat(price.value) < 0) {
+           setProductError(oldPrice, oldPriceError, 'Old Price should be positive numbers only')
+         }
+       }
+   
+       if (discountPercentage.value.trim() != '' || discountPercentage.value.trim() != null) {
+         if (isNaN(discountPercentage.value)) {
+           setProductError(discountPercentage, discountPercentageError, 'Discount Percentage should be numbers only')
+         } else if (parseInt(discountPercentage.value) <= 0 || parseInt(discountPercentage.value) > 60) {
+           setProductError(discountPercentage, discountPercentageError, 'Discount Percentage should be between 1 - 60')
+         }
+       }
+   
+       if(parseFloat(price.value) < parseFloat(purchasePrice.value)) {
+         console.log('this conditon true price.value < purchasePrice.value')
+         setProductError(price, priceError, 'Price should be greater than purchase price')
+       }
+   
+       if (stock.value.trim() === '' || stock.value.trim() == null) {
+         setProductError(stock, stockError, 'Stock field is emtpy')
+       } else {
+         if (isNaN(stock.value)) {
+           setProductError(stock, stockError, 'Stock should be numbers only')
+         } else if (parseInt(stock.value) < 0) {
+           setProductError(stock, stockError, 'Stock should be positive numbers only')
+         }
+       }
+   
+        if(theRequest == thePath) {
+             if(productImageList.files.length <= 0) {
+             console.log('upload image bro........')
+             setProductError(productImageList, productImageError, 'At least upload one picture for product')
+        }
+        }
+       
+   
+       if (description.value.trim() === '' || description.value.trim() == null) {
+         setProductError(description, descriptionError, 'Description field is emtpy');
+       } else {
+         if (!isNaN(description.value.trim())) {
+           setProductError(description, descriptionError, 'Description must not be digits');
+         }
+       }
+   
+       if (isFormError) {
+         console.log('yes there is error')
+         e.preventDefault()
+         isFormError = false
+       }
+       // check other part of the form here by calling the their functions
+     })
+   })
+   
+   
+   function setProductError(inputField, errorArea, errorMessage) {
+     isFormError = true
+     inputField.style.border = 'dashed 2px red'
+     errorArea.innerHTML = errorMessage
+     errorArea.style.display = 'block'
+   }
+   
+   
+     // ======================
+     function readURL(input) {
+           if (input.files && input.files[0]) {
+            //  console.log(input.files.length)
+             for (let i = 0; i < input.files.length; i++) {
+               if(i > 5) {
+                 break;
+               }
+              //  console.log('index-' + i)
+              //  console.log(input.files[i])
+                 var reader = new FileReader();
+   
+                 reader.onload = function (e) {
+                     $('#image_'+ (i+1))
+                         .attr('src', e.target.result);
+                         //
+                         $('#anchor_' + (i+1))
+                         .attr('href', e.target.result);
+                 };
+   
+                 reader.readAsDataURL(input.files[i]);
+               }
+             
+           }
+       }
+   
+   
+   
+     $(function () {
+       $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+         event.preventDefault();
+         $(this).ekkoLightbox({
+           alwaysShowClose: true
+         });
+       });
+   
+       $('.filter-container').filterizr({gutterPixels: 3});
+       $('.btn[data-filter]').on('click', function() {
+         $('.btn[data-filter]').removeClass('active');
+         $(this).addClass('active');
+       });
+     })
+   
+     // select
+     $(function () {
+   
+       //Initialize Select2 Elements
+       $('#category_select').select2({
+         theme: 'bootstrap4'
+       });
+       ///
+        $('#size_select').select2({
+         theme: 'bootstrap4'
+       });
+       ///
+       $('#color_select').select2({
+         theme: 'bootstrap4'
+       });
+       ///
+       $('#tag_select').select2({
+         theme: 'bootstrap4'
+       });
+     })
+     console.log('wellllllll')
+     console.log(theRequest)
+   
+   
+   </script>

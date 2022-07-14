@@ -1,0 +1,284 @@
+{% load static %}
+
+<!-- Header Start -->
+<div class="header section d-none d-lg-block">
+     <!-- Header Top Start -->
+     <div class="header-top">
+         <div class="container">
+             <div class="row justify-content-between">
+                 <!-- Header info Start -->
+                 <div class="col">
+                     <div class="header-top-info">
+                         <p><a href="#">Track your order</a></p>
+                         <p>Call <a href="tel:+12345879541"> +12345 879 541</a></p>
+                     </div>
+                 </div>
+                 <!-- Header info End -->
+
+                 <!-- Header Top Language & Currency Start -->
+                 <div class="col">
+                     <div class="header-top-action">
+                         <div class="header-top-lan dropdown">
+                             <button class="action" data-bs-toggle="dropdown">ENG</button>
+                             <ul class="dropdown-menu">
+                                 <li><a class="dropdown-item" href="#">English</a></li>
+                                 <li><a class="dropdown-item" href="#">spanish </a></li>
+                                 <li><a class="dropdown-item" href="#">اللغة العربية </a></li>
+                             </ul>
+                         </div>
+                         <a href="#" class="action">Newsletter</a>
+                     </div>
+                 </div>
+                 <!-- Header Top Language & Currency End -->
+             </div>
+         </div>
+     </div>
+     <!-- Header Top End -->
+
+     <!-- Header Bottom Start -->
+     <div class="header-bottom">
+         <div class="container position-relative">
+             <div class="row align-items-center">
+                 <div class="col-lg-3">
+                     <!-- Header Logo Start -->
+                     <div class="header-logo">
+                         <a href="{% url 'home' %}"><img src="{% static 'images/logo/my_logo.png' %}" alt=""></a>
+                     </div>
+                     <!-- Header Logo End -->
+                 </div>
+                 <div class="col-lg-6">
+                     <!-- Primary Menu Start -->
+                     <div class="primary-menu">
+                         <nav>
+                             <ul>
+                                 <li class="active"><a href="{% url 'home' %}">Home</a></li>
+                                 <li>
+                                    <a href="{% url 'product:product_list' %}">Shop</a>
+                                    <ul class="mega-sub-menu">
+                                        <li>
+                                            <ul class="menu-item">
+                                                {% if cart_data and cart_data.categories %}
+                                                {% for category in cart_data.categories %}
+                                                {% if forloop.counter <= cart_data.category_divider %}
+                                                <li><a href="{% url 'product:product_list' %}?q={{ category.id }}">{{ category.name }}</a></li>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% endif %}
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <ul class="menu-item">
+                                                {% if cart_data and cart_data.categories %}
+                                                {% for category in cart_data.categories %}
+                                                {% if forloop.counter > cart_data.category_divider %}
+                                                <li><a href="{% url 'product:product_list' %}?q={{ category.id }}">{{ category.name }}</a></li>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% endif %}
+                                            </ul>
+                                        </li>
+                                        
+                                        <li>
+                                            <a href="#"><img src="{% static 'images/menu-banner.jpg' %}" alt=""></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="active"><a href="{% url 'about' %}">About</a></li>
+                                <li class="active"><a href="{% url 'blog:list' %}">Blog</a></li>
+                                 <li><a href="{% url 'contact' %}">Contact</a></li>
+                             </ul>
+                         </nav>
+                     </div>
+                     <!-- Primary Menu End -->
+                 </div>
+                 <div class="col-lg-3">
+                     <!-- Header Action Start -->
+                     <div class="header-action">
+                         <a href="{% if request.user.is_authenticated %}{% url 'account:profile' %}{% else %}{% url 'account:login' %}{% endif %}" class="action"><i class="icofont-user-alt-7"></i></a>
+                         <a href="{% url 'wishlist' %}" class="action"><i class="icofont-heart-alt"></i></a>
+                         <div class="dropdown">
+                             <a class="action" href="" data-bs-toggle="dropdown">
+                                 <i class="fa fa-shopping-cart"></i>
+                                 <span class="num" id="cart_item_num">{% if request.session.cart_items %}{{ request.session.cart_items }}{% else %}0{% endif %}</span>
+                             </a>
+
+                             <div class="dropdown-menu dropdown-cart">
+                                 <div class="cart-content">
+                                     <ul class="cart-items" id="product_mini_list">
+                                         {% if not cart_data.is_error and cart_data.queryset %}
+                                         {% for item in cart_data.queryset %}
+                                         <li id="cart_item_{{ item.id }}">
+                                             <!-- Single Cart Item Start -->
+                                             <div class="single-cart-item">
+                                                 <div class="cart-thumb">
+                                                     <a id="product_image_thumb" href="{{ item.product.get_absolute_url }}"><img style="width: 98px;height: 110px;" src="{{ item.product.productimages_set.first.image.url }}" alt="Product Image"></a>
+                                                 </div>
+                                                 <div class="cart-item-content">
+                                                     <h6 class="product-name">{{ item.product.title }}</h6>
+                                                     <span class="product-price">${{ item.product_price }}</span>
+                                                     <div class="attributes-content">
+                                                         <span><strong>Size:</strong> {% if item.size %}{{ item.size.name }}{% else %}Free Size{% endif %} </span>
+                                                         <span><strong>Color:</strong> {% if item.color %}{{ item.color.name }}{% else %}No Color{% endif %} </span>
+                                                         <span id="cart_product_quantity_{{ item.product.id }}"><strong>Quantity:</strong> {{ item.product_quantity }} </span>
+                                                     </div>
+                                                     <a href="#" class="remove-cart"><i class="icon-x"></i></a>
+                                                 </div>
+                                             </div>
+                                             <!-- Single Cart Item End -->
+                                         </li>
+                                         {% endfor %}
+                                         {% else %}
+                                         <br>
+                                         <h5 id="no_item_in_cart" class="text-center">No Item In Cart</h5>
+                                         {% endif %}
+                                     </ul>
+                                 </div>
+                                 <div class="cart-price">
+                                     <div class="cart-subtotals">
+                                         <div class="price-inline">
+                                             <span class="label">Subtotal</span>
+                                             <span id="cart_subtotal" class="value">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.subtotal }}{% else %}$0.00{% endif %}</span>
+                                         </div>
+                                         <div class="price-inline">
+                                             <span class="label">Shipping</span>
+                                             <span id="cart_shipment" class="value">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.shipment_fee }}{% else %}$0.00{% endif %}</span>
+                                         </div>
+                                         <div class="price-inline">
+                                            <span class="label">Discount</span>
+                                            <span id="cart_discount" class="value">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.discount_total }}{% else %}$0.00{% endif %}</span>
+                                        </div>
+                                         <div class="price-inline">
+                                             <span class="label">Quantity</span>
+                                             <span id="cart_current_item" class="value">{% if cart_data.queryset.first %}{{ cart_data.queryset.first.cart.current_item_num }}{% else %}0{% endif %}</span>
+                                         </div>
+                                     </div>
+                                     <div class="cart-total">
+                                         <div class="price-inline">
+                                             <span class="label">Total</span>
+                                             <span id="cart_total" class="value">{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.total }}{% else %}$0.00{% endif %}</span>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="checkout-btn">
+                                     <a href="{% url 'cart:item_list' %}" class="btn btn-hover-primary d-block">View Cart</a>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     <!-- Header Action End -->
+                 </div>
+             </div>
+         </div>
+     </div>
+     <!-- Header Bottom End -->
+ </div>
+ <!-- Header End -->
+
+ <!-- Header Mobile Start -->
+ <div class="header-mobile d-lg-none">
+     <div class="container">
+         <div class="row row-cols-2 align-items-center">
+             <div class="col">
+                 <!-- Header Logo Start -->
+                 <div class="header-logo">
+                     <a href="{% url 'home' %}"><img src="{% static 'images/logo/logo.png' %}" alt=""></a>
+                 </div>
+                 <!-- Header Logo End -->
+             </div>
+             <div class="col">
+                 <!-- Header Action Start -->
+                 <div class="header-action">
+                     <a href="{% if request.user.is_authenticated %}{% url 'account:profile' %}{% else %}{% url 'account:login' %}{% endif %}" class="action"><i class="icofont-user-alt-7"></i></a>
+                     <a href="{% url 'wishlist' %}" class="action"><i class="icofont-heart-alt"></i></a>
+                     <a href="{% url 'cart:item_list' %}" class="action">
+                         <i class="icofont-cart"></i>
+                         <span class="num" id="cart_item_num">{% if request.session.cart_items %}{{ request.session.cart_items }}{% else %}0{% endif %}</span>
+                     </a>
+                     <a href="javascript:;" class="action mobile-menu-open"><i class="icofont-navigation-menu"></i></a>
+                 </div>
+                 <!-- Header Action End -->
+             </div>
+         </div>
+     </div>
+ </div>
+ <!-- Header Mobile End -->
+
+ <!-- offcanvas Menu Start -->
+ <div class="offcanvas-menu d-lg-none">
+     <a class="menu-close" href="javascript:;">
+         <span></span>
+         <span></span>
+     </a>
+     <div class="offcanvas-menu-wrapper">
+         <!-- Header info Start -->
+         <div class="header-top-info">
+             <p><a href="#">Track your order</a></p>
+             <p>Call <a href="tel:+12345879541"> +12345 879 541</a></p>
+         </div>
+         <!-- Header info End -->
+         <!-- Header Top Language & Currency Start -->
+         <div class="header-top-action">
+             <div class="header-top-lan dropdown">
+                 <button class="action" data-bs-toggle="dropdown">ENG</button>
+                 <ul class="dropdown-menu">
+                     <li><a class="dropdown-item" href="#">English</a></li>
+                     <li><a class="dropdown-item" href="#">spanish </a></li>
+                     <li><a class="dropdown-item" href="#">اللغة العربية </a></li>
+                 </ul>
+             </div>
+             <a href="#" class="action">Newsletter</a>
+         </div>
+         <!-- Header Top Language & Currency End -->
+         <!-- Primary Menu Start -->
+         <div class="mobile-primary-menu">
+             <nav>
+                 <ul>
+                     <li class="active"><a href="{% url 'home' %}">Home</a></li>
+                     <li>
+                         <a href="#">Shop</a>
+                         <ul class="mega-sub-menu">
+                             <li>
+                                 <a href="#">Categories</a>
+                                 <ul class="menu-item">
+                                    {% if cart_data and cart_data.categories %}
+                                    {% for category in cart_data.categories %}
+                                    {% if forloop.counter <= cart_data.category_divider %}
+                                    <li><a href="{% url 'product:product_list' %}?q={{ category.id }}">{{ category.name }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                             </li>
+                             <li>
+                                 <a href="#">More Categories</a>
+                                 <ul class="menu-item">
+                                    {% if cart_data and cart_data.categories %}
+                                    {% for category in cart_data.categories %}
+                                    {% if forloop.counter > cart_data.category_divider %}
+                                    <li><a href="{% url 'product:product_list' %}?q={{ category.id }}">{{ category.name }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                             </li>
+                             <li>
+                                 <a href="#"><img src="{% static 'images/menu-banner.jpg' %}" alt=""></a>
+                             </li>
+                         </ul>
+                     </li>
+                     <li class="active"><a href="{% url 'about' %}">About</a></li>
+                     <li class="active"><a href="{% url 'blog:list' %}">Blog</a></li>
+                     <li class="active"><a href="{% url 'contact' %}">Contact</a></li>
+                 </ul>
+             </nav>
+         </div>
+         <!-- Primary Menu End -->
+     </div>
+ </div>
+ <!-- offcanvas Menu End -->
+
+ <!-- offcanvas Menu Start -->
+ <div class="menu-overlay"></div>
+ <!-- offcanvas Menu End -->
+
+

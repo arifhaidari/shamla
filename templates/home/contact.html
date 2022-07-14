@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact{% endblock title %}
+
+{% block content %}
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Contact</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb active">Contact</li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+
+ <!-- Contact Start -->
+ <div class="section section-padding-02 mt-n10">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <!-- Checkout Info End -->
+         <div class="row">
+             <div class="col-lg-6">
+                 <!-- Contact Wrapper Start -->
+                 <div class="contact-wrapper">
+                     <h4 class="contact-title">Get in touch</h4>
+                     <p>Send us message for your queries <br> We will be more than happy to help you out </p>
+
+                     <div class="contact-form">
+                         <form method="post" id="message_form">
+                             {% csrf_token %}
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="single-form">
+                                         <input type="text" name="name" id="name" placeholder="Your Name*">
+                                         <small id="name_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-6">
+                                     <div class="single-form">
+                                         <input type="email" name="email" id="email" placeholder="Your Email*">
+                                         <small id="email_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-12">
+                                     <div class="single-form">
+                                         <textarea name="message" id="message" placeholder="Message*"></textarea>
+                                         <small id="message_error" style="display: none;color: red;"></small>
+                                     </div>
+                                 </div>
+                                 <p class="form-message"></p>
+                                 <div class="col-md-12">
+                                     <div class="single-form">
+                                         <button  id="message_submit_button" class="btn btn-primary btn-hover-dark rounded-pill">Send Message</button>
+                                     </div>
+                                 </div>
+                             </div>
+                         </form>
+                     </div>
+                 </div>
+                 <!-- Contact Wrapper End -->
+             </div>
+             <div class="col-lg-6">
+                 <!-- Contact Wrapper Start -->
+                 <div class="contact-information">
+                     <div class="single-information">
+                         <h5 class="title">Office Address</h5>
+                         <p>245 Southern Street, Apartment no. 174 Central Twon, New Yourk, USa</p>
+                     </div>
+                     <div class="single-information">
+                         <h5 class="title">Phone Number</h5>
+                         <p><a href="#">+12345 678 987</a></p>
+                         <p><a href="#">+98745 612 321</a></p>
+                     </div>
+                     <div class="single-information">
+                         <h5 class="title">Web Address</h5>
+                         <p><a href="#">info@example.com</a></p>
+                         <p><a href="#">www.example.com</a></p>
+                     </div>
+                 </div>
+                 <!-- Contact Wrapper End -->
+             </div>
+         </div>
+     </div>
+ </div>
+ <!-- Contact End -->
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    var isSaveError = false;
+    const messageForm = document.getElementById('message_form');
+const name = document.getElementById('name');
+const email = document.getElementById('email');
+const message = document.getElementById('message');
+
+
+// Show fields error 
+const nameError = document.getElementById('name_error');
+const emailError = document.getElementById('email_error');
+const messageError = document.getElementById('message_error');
+
+$("#message_submit_button").on('click', function () {
+     console.log('register_button got pressed')
+     messageForm.addEventListener('submit', (e) => {
+          console.log('the save change button got called');
+
+          if (name.value.trim() === '' || name.value.trim() == null) {
+               setError(name, nameError, 'Name field is emtpy');
+          } else {
+               if (!isNaN(name.value.trim())) {
+                    setError(name, nameError, 'Name must not be digits');
+               }
+          }
+
+          if (email.value.trim() === '' || email.value.trim() == null) {
+               setError(email, emailError, 'Email field is emtpy')
+          } else {
+               if (!isNaN(email.value.trim())) {
+                    setError(email, emailError, 'Email must not be digits')
+               }
+               if (!validateEmail(email.value)) {
+                    setError(email, emailError, 'Email is not valid')
+               }
+          }
+
+          if (message.value.trim() === '' || message.value.trim() == null) {
+               setError(message, messageError, 'Password field is emtpy')
+          }
+
+          if (isSaveError) {
+               console.log('yes there is error')
+               e.preventDefault()
+               isSaveError = false
+          }
+     })
+})
+
+function setError(inputField, errorArea, errorMessage) {
+     isSaveError = true
+     inputField.style.border = 'dashed 2px red'
+     errorArea.innerHTML = errorMessage
+     errorArea.style.display = 'block'
+}
+
+function validateEmail(email) {
+     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+     return re.test(String(email).toLowerCase());
+}
+</script>
+{% endblock script %}

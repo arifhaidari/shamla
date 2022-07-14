@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock title %}
+
+{% block content %}
+
+<!-- Page Banner Start -->
+<div class="page-banner section">
+     <div class="container">
+         <div class="page-banner-wrapper text-center">
+             <h2 class="title">Order Summary</h2>
+             <ul class="breadcrumb justify-content-center">
+                 <li class="breadcrumb"><a href="{% url 'home' %}">Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'product:product_list' %}">Products</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'cart:item_list' %}">Cart Home</a></li>/
+                 <li class="breadcrumb"><a href="{% url 'cart:checkout' %}">Checkout</a></li>
+             </ul>
+         </div>
+     </div>
+ </div>
+ <!-- Page Banner End -->
+
+<!-- Checkout Start -->
+<div class="section section-padding-02 mt-n6">
+     <div class="container">
+         <!-- Checkout Info Start -->
+         <div class="checkout-info">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags  == 'error' %}
+            <p class="info-header error"><i class="fa fa-exclamation-circle"></i> <strong>Error:</strong> {{ message }}</p>
+            {% else %}
+            <p class="info-header error"><i class="fa fa-check-circle"></i> <strong>Success:</strong> {{ message }}</p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <!-- Checkout Info End -->
+
+
+         <!-- Checkout Start -->
+         <div class="checkout-wrapper">
+                 <div class="row">
+                     <div class="col-lg-6">
+                         <!-- Checkout Form Start -->
+                         <div class="checkout-order">
+                              <div class="checkout-title">
+                                  <h4 class="title">Billing Address</h4>
+                              </div>
+ 
+                              <div class="checkout-order-table table-responsive">
+                                  <table class="table">
+                                      <tbody>
+                                         {% if order_object and order_object.billing_address %}
+                                          <tr>
+                                              <td class="Product-name">
+                                                  <p>Name</p>
+                                              </td>
+                                              <td class="Product-price">
+                                                  <p>{{ order_object.billing_address.full_name }}</p>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="Product-name">
+                                                 <p>Company</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>{{ order_object.billing_address.company }}</p>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                            <td class="Product-name">
+                                                <p>Country</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{{ order_object.billing_address.country }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>City</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.city }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>District</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.district }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Street</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.street }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Zip Code</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.zipcode }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Phone</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.phone }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Email</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.email }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Apartment</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.billing_address.apartment }}</p>
+                                           </td>
+                                        </tr>
+                                          {% endif %}
+                                      </tbody>
+                                      
+                                  </table>
+                              </div>
+ 
+                              
+                          </div>
+                          <!-- Checkout Form End -->
+                          <!-- Checkout Form Start -->
+                         <div class="checkout-order">
+                              <div class="checkout-title">
+                                  <h4 class="title">Shipping Address</h4>
+                              </div>
+ 
+                              <div class="checkout-order-table table-responsive">
+                                  <table class="table">
+                                      <tbody>
+                                         {% if order_object and order_object.shipping_address %}
+                                          <tr>
+                                              <td class="Product-name">
+                                                  <p>Name</p>
+                                              </td>
+                                              <td class="Product-price">
+                                                  <p>{{ order_object.shipping_address.full_name }}</p>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="Product-name">
+                                                 <p>Company</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>{{ order_object.shipping_address.company }}</p>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                            <td class="Product-name">
+                                                <p>Country</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{{ order_object.shipping_address.country }}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>City</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.city }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>District</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.district }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Street</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.street }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Zip Code</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.zipcode }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Phone</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.phone }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Email</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.email }}</p>
+                                           </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Apartment</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{{ order_object.shipping_address.apartment }}</p>
+                                           </td>
+                                        </tr>
+                                          {% else %}
+                                          <h6>Shipping And Billing Addresses Are Same</h6>
+                                          {% endif %}
+                                      </tbody>
+                                      
+                                  </table>
+                              </div>
+ 
+                              
+                          </div>
+                          <!-- Checkout Form End -->
+                     </div>
+                     <div class="col-lg-6">
+                         <!-- Checkout Form Start -->
+                         <div class="checkout-order">
+                             <div class="checkout-title">
+                                 <h4 class="title">Your Order</h4>
+                             </div>
+
+                             <div class="checkout-order-table table-responsive">
+                                 <table class="table">
+                                     <thead>
+                                         <tr>
+                                             <th class="Product-name">Product</th>
+                                             <th class="Product-price">Total</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                        {% if not cart_data.is_error and cart_data.queryset %}
+                                        {% for item in cart_data.queryset %}
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>{{ item.product.title|truncatechars:45 }} × {{ item.product_quantity }}</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>${{ item.total_price }}</p>
+                                             </td>
+                                         </tr>
+                                         {% endfor %}
+                                         {% endif %}
+                                     </tbody>
+                                     <tfoot>
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>Subtotal</p>
+                                             </td>
+                                             <td class="Product-price">
+                                                 <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.subtotal }}{% else %}$0.00{% endif %}</p>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                            <td class="Product-name">
+                                                <p>Shipping</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.shipment_fee }}{% else %}$0.00{% endif %}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="Product-name">
+                                                <p>Discount</p>
+                                            </td>
+                                            <td class="Product-price">
+                                                <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.discount_total }}{% else %}$0.00{% endif %}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                           <td class="Product-name">
+                                               <p>Quantity</p>
+                                           </td>
+                                           <td class="Product-price">
+                                               <p>{% if cart_data.queryset.first %}{{ cart_data.queryset.first.cart.current_item_num }}{% else %}0{% endif %}</p>
+                                           </td>
+                                       </tr>
+                                         <tr>
+                                             <td class="Product-name">
+                                                 <p>Total</p>
+                                             </td>
+                                             <td class="total-price">
+                                                 <p>{% if cart_data.queryset.first %}${{ cart_data.queryset.first.cart.total }}{% else %}$0.00{% endif %}</p>
+                                             </td>
+                                         </tr>
+                                     </tfoot>
+                                 </table>
+                             </div>
+
+                             <div class="checkout-payment">
+                                 
+                                <p>
+                                    Note: {{ order_object.order_note }}
+
+                                </p>
+                                {% if order_object.status == 'Created' %}
+                                <form action="{% url 'billing:payment_method' %}" method="POST">
+                                     {% csrf_token %}
+                                <div class="cart-total-btn d-grid">
+                                    <button type="submit" id="checkout-button" class="btn btn-dark btn-hover-primary rounded-pill">Checkout</button>
+                                </div>
+                                </form>
+                                {% endif %}
+                             </div>
+                         </div>
+                         <!-- Checkout Form End -->
+                     </div>
+                 </div>
+         </div>
+         <!-- Checkout End -->
+     </div>
+ </div>
+ <!-- Checkout End -->
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('#checkout-button').click(function() {
+    //   $('#checkout-button').prop('disabled', 'true')
+      $('#checkout-button').html('<div class="spinner-border" role="status"></div>')
+    })
+</script>
+{% endblock script %}
+

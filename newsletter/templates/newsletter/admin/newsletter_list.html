@@ -1,0 +1,114 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+{% block title %}Newsletter{% endblock title %}
+
+{% block content %}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+     <section class="content-header">
+       <div class="container-fluid">
+         <div class="row mb-2">
+           <div class="col-sm-6">
+             <h1>Newsletters</h1>
+           </div>
+           <div class="col-sm-6">
+             <ol class="breadcrumb float-sm-right">
+               <a id="add_product_button" href="{% url 'newsletter:newsletter_create' %}" class="btn btn-block btn-outline-primary"><i class="fas fa-plus"></i> Add Newsletter</a>
+             </ol>
+           </div>
+         </div>
+       </div><!-- /.container-fluid -->
+     </section>
+ 
+     <!-- Main content -->
+     <section class="content">
+       <div class="container-fluid">
+         <div class="row">
+           <div class="col-12">
+ 
+             <div class="card">
+               <!-- /.card-header -->
+               <div class="card-body">
+                 <table id="newsletter_table1" class="table table-bordered table-striped">
+                   <thead>
+                   <tr>
+                     <th>#</th>
+                     <th>Subject</th>
+                     <th>Greeting</th>
+                     <th>Type</th>
+                     <th>Update At</th>
+                     <th>Created At</th>
+                     <th>Action</th>
+                   </tr>
+                   </thead>
+                   <tbody>
+                        {% for object in object_list %}
+                     <tr id="newsletter_{{ object.id }}">
+                     <td>{{ forloop.counter }}</td>
+                     <td><a href="{{ object.get_absolute_url }}">{{ object.subject }}</a></td>
+                     <td>{{ object.greeting }}</td>
+                     <td>{% if object.newsletter_type %}{{ object.newsletter_type }}{% else %}All{% endif %}</td>
+                     <td>{{ object.updated_at|date:"M, d, Y" }}</td>
+                     <td>{{ object.created_at|date:"M, d, Y" }}</td>
+                     <td class="text-center">
+                         <a href="{{ object.get_absolute_url }}" class="btn btn-outline-info"><i class="fas fa-edit"></i> Edit</a> 
+                       <a href="javascript:void(0)" onclick="showDeleteModal('{{ object.id }}', 'newsletter')" class="btn btn-outline-danger"><i class="far fa-trash-alt"></i> Delete</a> 
+                      </td>
+                   </tr>
+                   {% endfor %}
+                   </tbody>
+                   <tfoot>
+                   <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th>Greeting</th>
+                    <th>Type</th>
+                    <th>Update At</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                   </tr>
+                   </tfoot>
+                 </table>
+               </div>
+               <!-- /.card-body -->
+             </div>
+             <!-- /.card -->
+           </div>
+           <!-- /.col -->
+         </div>
+         <!-- /.row -->
+       </div>
+       <!-- /.container-fluid -->
+     </section>
+     <!-- /.content -->
+   </div>
+   <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block script %}
+
+<script>
+
+     // ================== datatable
+       $(function () {
+         $("#newsletter_table1").DataTable({
+           "responsive": true,
+           "autoWidth": false,
+         });
+         $('#newsletter_table2').DataTable({
+           "paging": true,
+           "lengthChange": false,
+           "searching": false,
+           "ordering": true,
+           "info": true,
+           "autoWidth": false,
+           "responsive": true,
+         });
+       });
+     </script>
+     
+
+{% endblock script %}

@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+<!-- Slider Section Start -->
+<div class="slider-section section slider-active">
+     <div class="swiper-container">
+          <div class="swiper-wrapper">
+               {% for slide in sliders %}
+               <!-- Slider Slider Start -->
+               <div class="single-slider swiper-slide animation-style-01">
+                    <div class="container">
+                         <div class="slider-wrapper">
+                              <div class="row">
+                                   <div class="col-sm-6 align-self-center">
+                                        <!-- Slider Content Start -->
+                                        <div class="slider-content">
+                                             <img class="shape-1"
+                                                  src="{% static 'images/slider/slider-shape/shape-1.svg' %}" alt="">
+                                             <h4 class="sub-title">{{ slide.subtitle }}</h4>
+                                             <h2 class="main-title">
+                                                  {% autoescape off %}
+                                                  {{ slide.title|truncatechars:25 }}
+                                                  {% endautoescape %}
+                                             </h2>
+                                             <a class="slider-btn" href="#">Shop Now<span
+                                                       class="material-icons">arrow_right_alt</span></a>
+                                        </div>
+                                        <!-- Slider Content End -->
+                                   </div>
+                                   <div class="col-sm-6">
+                                        <!-- Slider Image Start -->
+                                        <div class="slider-image">
+                                             <img src="{{ slide.image.url }}" alt="">
+
+                                             <div class="slider-imgaes-shape">
+                                                  <div class="shape shape-1">
+                                                       <img src="{% static 'images/slider/slider-shape/shape-2.svg' %}"
+                                                            alt="">
+                                                  </div>
+                                                  <div class="shape shape-2">
+                                                       <img src="{% static 'images/slider/slider-shape/shape-3.svg' %}"
+                                                            alt="">
+                                                  </div>
+                                                  <div class="shape shape-3">
+                                                       <img src="{% static 'images/slider/slider-shape/shape-4.svg' %}"
+                                                            alt="">
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <!-- Slider Image End -->
+                                   </div>
+                              </div>
+
+                              <div class="slider-social d-none d-md-block">
+                                   <a href="#"><i class="icofont-facebook"></i></a>
+                                   <a href="#"><i class="icofont-twitter"></i></a>
+                                   <a href="#"><i class="icofont-instagram"></i></a>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+               <!-- Slider Slider Start -->
+               {% endfor %}
+          </div>
+          <!-- Add Arrows -->
+          <div class="swiper-button-next"><span class="material-icons">trending_flat</span></div>
+          <div class="swiper-button-prev"><span class="material-icons">trending_flat</span></div>
+     </div>
+</div>
+<!-- Slider Section End -->
+
+<!-- Product Editor Pick Start -->
+<div class="section section-padding mt-n1">
+     <div class="container">
+          <!-- Editor Pick Wrapper Start -->
+          <div class="editor-pick-wrapper">
+               <div class="section-title line-1">
+                    <h2 class="title">Recommends</h2>
+               </div>
+               <div class="product-tabs-menu">
+                    <ul class="nav">
+                         {% if recommended %}
+                         {% for category_name, category_items in recommended.items %}
+                         <li class="nav-item"><a class="nav-link {% if forloop.counter == 1 %}active{% endif %}" data-bs-toggle="tab" href="#tab{{ forloop.counter }}">{{ category_name|truncatechars:10 }}</a>
+                         </li>
+                         {% endfor %}
+                         {% endif %}
+                    </ul>
+               </div>
+          </div>
+          <!-- Editor Pick Wrapper End -->
+
+          <!-- Product Start -->
+          <div class="product-wrapper">
+               <div class="tab-content">
+               {% if recommended %}
+               {% for category_name, category_items in recommended.items %}
+                    <div class="tab-pane fade {% if forloop.counter == 1 %}show active{% endif %}" id="tab{{ forloop.counter }}">
+                         <div class="product-active">
+                              <div class="swiper-container">
+                                   <div class="swiper-wrapper">
+                                        <!-- loop from here -->
+                                        {% if category_items %}
+                                        {% for theVal in category_items %}
+                                        <div class="swiper-slide">
+                                             <!-- Single-Product Start -->
+                                             <div class="single-product">
+                                                  <div class="product-image">
+                                                       <a href="{{ theVal.get_absolute_url }}">
+                                                            <img src="{{ theVal.productimages_set.first.image.url }}"
+                                                                 alt="product">
+                                                            <img class="hover-image"
+                                                                 src="{{ theVal.productimages_set.last.image.url }}"
+                                                                 alt="product">
+                                                       </a>
+                                                       {% if theVal.discount_percentage %}
+                                                       <span class="product-label percentage">-{{ theVal.discount_percentage }}%</span>
+                                                       {% endif %}
+                                                  </div>
+                                                  <div class="product-content">
+                                                       <div class="product-category-action">
+                                                            <div class="product-category">
+                                                                 <a href="{% url 'product:product_list' %}?q={% if theVal.category.all %}{{ theVal.category.first.id }}{% else %}all{% endif %}">{% if theVal.category.all %}{{ theVal.category.first.name }}{% else %}Default Category{% endif %}</a>
+                                                            </div>
+                                                            <div class="product-action">
+                                                                 <a  onclick="updateCartItem('{{ theVal.id }}', 'add', '{{ theVal.size.first.id }}', '{{ theVal.color.first.id }}', 1, 'other')" class="action" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Add to Cart"><i
+                                                                           class="fa fa-shopping-cart"></i></a>
+                                                                 <a onclick="addToWishList('{{ theVal.id }}', '{{ theVal.size.first.id }}', '{{ theVal.color.first.id }}')" class="action" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Compare"><i
+                                                                           class="fa fa-heart-o"></i></a>
+                                                            </div>
+                                                       </div>
+                                                       <h4 class="product-title"><a
+                                                                 href="{{ theVal.get_absolute_url }}">{{ theVal.title|truncatechars:25 }}</a></h4>
+                                                       <div class="product-price">
+                                                            <span class="old-price">{% if theVal.old_price %}${{ theVal.old_price }}{% endif %}</span>
+                                                            <span class="sale-price">${{ theVal.price }}</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <!-- Single-Product End -->
+                                        </div>
+                                        {% endfor %}
+                                        {% else %}
+                                        <h4 class="text-center">No Product Available In This Category</h4>
+                                        {% endif %}
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+
+               {% endfor %}
+               {% else %}
+               <h4 class="text-center"> There is no category or product </h4>
+               {% endif %}
+               </div>
+
+          </div>
+          <!-- Product End -->
+     </div>
+</div>
+<!-- Product Editor Pick End -->
+
+
+<!-- New Arrivals Start -->
+<div class="section section-padding mt-n1">
+     <div class="container">
+          <!-- New Arrivals Wrapper Start -->
+          <div class="new-arrivals-wrapper">
+               <div class="section-title line-1">
+                    <h2 class="title">New Arrivals</h2>
+               </div>
+               <div class="product-countdown">
+                    <div class="countdown-title">
+                         <h4 class="title">Best Deal</h4>
+                    </div>
+                    <div id="countdown"></div>
+               </div>
+          </div>
+          <!-- Product Start -->
+          <div class="product-wrapper">
+               <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab">
+                         <div class="product-active">
+                              <div class="swiper-container">
+                                   <div class="swiper-wrapper">
+                                        <!-- loop from here -->
+                                        {% if new_arrivals %}
+                                        {% for new in new_arrivals %}
+                                        <div class="swiper-slide">
+                                             <!-- Single-Product Start -->
+                                             <div class="single-product">
+                                                  <div class="product-image">
+                                                       <a href="{{ new.get_absolute_url }}">
+                                                            <img src="{{ new.productimages_set.first.image.url }}"
+                                                                 alt="product">
+                                                            <img class="hover-image"
+                                                                 src="{{ new.productimages_set.last.image.url }}"
+                                                                 alt="product">
+                                                       </a>
+                                                       {% if new.discount_percentage %}
+                                                       <span class="product-label percentage">-{{ new.discount_percentage }}%</span>
+                                                       {% endif %}
+                                                  </div>
+                                                  <div class="product-content">
+                                                       <div class="product-category-action">
+                                                            <div class="product-category">
+                                                                 <a href="{% url 'product:product_list' %}?q={% if new.category.all %}{{ new.category.first.id }}{% else %}all{% endif %}">{% if new.category.all %}{{ new.category.first.name }}{% else %}Default Category{% endif %}</a>
+                                                            </div>
+                                                            <div class="product-action">
+                                                                 <a onclick="updateCartItem('{{ new.id }}', 'add', '{{ new.size.first.id }}', '{{ new.color.first.id }}', 1, 'other')" class="action" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Add to Cart"><i
+                                                                           class="fa fa-shopping-cart"></i></a>
+                                                                 <a onclick="addToWishList('{{ new.id }}', '{{ new.size.first.id }}', '{{ new.color.first.id }}')" class="action" data-tooltip="tooltip"
+                                                                      data-placement="top" title="Compare"><i
+                                                                           class="fa fa-heart-o"></i></a>
+                                                            </div>
+                                                       </div>
+                                                       <h4 class="product-title"><a
+                                                                 href="{{ new.get_absolute_url }}">{{ new.title|truncatechars:25 }}</a></h4>
+                                                       <div class="product-price">
+                                                            <span class="old-price">{% if new.old_price %}${{ new.old_price }}{% endif %}</span>
+                                                            <span class="sale-price">${{ new.price }}</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <!-- Single-Product End -->
+                                        </div>
+                                        {% endfor %}
+                                        {% else %}
+                                        <h4 class="text-center">there is no new product in two months</h4>
+                                        {% endif %}
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+
+          </div>
+          <!-- Product End -->
+     </div>
+</div>
+<!-- New Arrivals End -->
+
+{% if 2 == 1 %}
+<!-- Blog Start -->
+<div class="section section-padding mt-n1 text-center+">
+     <div class="container">
+          <!-- Section Title Start -->
+          <div class="section-title text-center">
+               <h2 class="title">Blog Post</h2>
+          </div>
+          <!-- Section Title End -->
+
+          <!-- Blog Wrapper Start -->
+          <div class="blog-wrapper">
+               <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                         <!-- Single Blog Start -->
+                         <div class="single-blog">
+                              <div class="blog-image">
+                                   <a href="blog-details-left-sidebar.html">
+                                        <img src="{% static 'images/blog/blog-01.jpg' %}" alt="Blog">
+                                   </a>
+                              </div>
+                              <div class="blog-content">
+                                   <div class="blog-meta">
+                                        <a href="#">Women</a>
+                                        <span>14 October, 2020 </span>
+                                   </div>
+                                   <h4 class="title"><a href="blog-details-left-sidebar.html">Hot Summer Fashion for
+                                             Women <br> new collections arrives</a></h4>
+                                   <a href="blog-details-left-sidebar.html" class="more">Read more</a>
+                              </div>
+                         </div>
+                         <!-- Single Blog End -->
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                         <!-- Single Blog Start -->
+                         <div class="single-blog">
+                              <div class="blog-image">
+                                   <a href="blog-details-left-sidebar.html">
+                                        <img src="{% static 'images/blog/blog-02.jpg' %}" alt="Blog">
+                                   </a>
+                              </div>
+                              <div class="blog-content">
+                                   <div class="blog-meta">
+                                        <a href="#">Fashion</a>
+                                        <span>14 October, 2020 </span>
+                                   </div>
+                                   <h4 class="title"><a href="blog-details-left-sidebar.html">Hot Summer Fashion for
+                                             Women <br> new collections arrives</a></h4>
+                                   <a href="blog-details-left-sidebar.html" class="more">Read more</a>
+                              </div>
+                         </div>
+                         <!-- Single Blog End -->
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                         <!-- Single Blog Start -->
+                         <div class="single-blog">
+                              <div class="blog-image">
+                                   <a href="blog-details-left-sidebar.html">
+                                        <img src="{% static 'images/blog/blog-03.jpg' %}" alt="Blog">
+                                   </a>
+                              </div>
+                              <div class="blog-content">
+                                   <div class="blog-meta">
+                                        <a href="#">Man</a>
+                                        <span>14 October, 2020 </span>
+                                   </div>
+                                   <h4 class="title"><a href="blog-details-left-sidebar.html">Hot Summer Fashion for
+                                             Women <br> new collections arrives</a></h4>
+                                   <a href="blog-details-left-sidebar.html" class="more">Read more</a>
+                              </div>
+                         </div>
+                         <!-- Single Blog End -->
+                    </div>
+               </div>
+          </div>
+          <!-- Blog Wrapper End -->
+     </div>
+</div>
+<!-- Blog End -->
+{% endif %}
+
+{% include 'home/brand_newsletter.html' with brands=brands is_newsletter=is_newsletter %}
+
+{% endblock content %}
+
+{% block script %}
+{% include 'product/js_file/update_cart_script.html' %}
+{% endblock script %}
