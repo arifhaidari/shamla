@@ -220,7 +220,7 @@ We welcome contributions to enhance Shamla. Please follow these steps:
 
 ## License
 
-**Copyright © 2024 Arif Haidari and Shamla Atelier.**
+**Copyright © 2022 Arif Haidari and Shamla Atelier.**
 
 This project was originally a private project and has been made public for educational and portfolio purposes only. **No part of this project, including the code, design, or any other materials, may be used, copied, modified, merged, published, distributed, sublicensed, or sold for production or commercial purposes without explicit permission from the copyright holder.**
 
