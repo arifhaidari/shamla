@@ -56,7 +56,8 @@ class CreateCheckoutSessionView(View):
      def post(self, request, *args, **kwargs):
           cart_obj, new_obj = Cart.objects.new_or_get(request)
           try:
-               order_object = Order.objects.get(cart=cart_obj, active=True, status=Order.OrderStatus.Created)
+               order_queryset = Order.objects.filter(cart=cart_obj, active=True, status=Order.OrderStatus.Created).order_by('-id', '-updated')
+               order_object = order_queryset.first()
                the_price = int(cart_obj.total * 100)
           except:
                messages.error(request, 'There is no order created. Please try again')

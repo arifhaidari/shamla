@@ -22,16 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4&mqf3eud+1w^8_k&7++*yg!7)xzxf2jz8zko-^=3nd2q2@fcy'
+SECRET_KEY = ''
 
-STRIPE_SECRET_KEY = 'sk_test_kelVPmtJ1IDnXDF3oaQGq4JL000WOFQ3tY'
-STRIPE_PUB_KEY = 'pk_test_b7mDswFCelSp7EKwyFuoSK5Z00dboIClCl'
-WEBHOOK_SECRET_KEY = 'whsec_2Z6xXHhNcGTG2G9wRhvzWcVAetajWPdB'
+STRIPE_SECRET_KEY = ''
+STRIPE_PUB_KEY = ''
+WEBHOOK_SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -175,18 +175,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
 
 # from_email: A string. If None, Django will use the value of the DEFAULT_FROM_EMAIL setting.
-DEFAULT_FROM_EMAIL = 'arifmoazy351@gmail.com'
+DEFAULT_FROM_EMAIL = ''
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'arifmoazy351@gmail.com'
-EMAIL_HOST_PASSWORD = 'dbcemhxsxddchtgg'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 # Mailchimp configuration
-MAILCHIMP_API_KEY = "df494864e2315b0faa02ccc16d11823a-us20"
+MAILCHIMP_API_KEY = ""
 MAILCHIMP_DATA_CENTER = "us20"
-MAILCHIMP_EMAIL_LIST_ID = "74f23bfe3c"
+MAILCHIMP_EMAIL_LIST_ID = ""
 
 
 # CORS_REPLACE_HTTPS_REFERER      = False

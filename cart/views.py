@@ -291,6 +291,9 @@ def create_user_on_fly(request, raw_data):
 def place_order(order_note, address_object, cart_object, billing_profile_object):
      if address_object is None or cart_object is None:
           return None
+     # delete all the order prevously created with this cart_object
+     Order.objects.filter(cart=cart_object).delete()
+     # create new Order
      order_obj, created = Order.objects.get_or_create(
           cart=cart_object, billing_profile=billing_profile_object,
           active=True, status=Order.OrderStatus.Created

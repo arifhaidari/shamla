@@ -100,5 +100,6 @@ class Mailchimp(object):
             raise ValueError("Not a valid choice for email status")
         return status
 
-    
+
+
 

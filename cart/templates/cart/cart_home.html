@@ -116,14 +116,14 @@
                          <p>Enter your coupon code if you have one.</p>
                      </div>
                      <div class="cart-form">
-                         <form action="#">
+                       
                              <div class="single-form">
                                  <input type="text" placeholder="Enter your coupon code..">
                              </div>
                              <div class="single-form">
                                  <button class="btn btn-dark btn-hover-primary rounded-pill">Apply Coupon</button>
                              </div>
-                         </form>
+                     
                      </div>
                  </div>
                  <!-- Cart Shipping End -->
@@ -374,7 +374,7 @@ function clearCart(cartId) {
                $('#shipping_price').text('$' + val.value)
                $('#cart_shipment').text('$' + val.value)
                var totalVal = $('#cart_summary_subtotal').text()
-               let caluclatedTotal = Number(totalVal.slice(1)) - Number(val.value)
+               let caluclatedTotal = Number(totalVal.slice(1)) + Number(val.value)
                $('#cart_summary_total').text('$' + caluclatedTotal)
                $('#cart_total').text('$' + caluclatedTotal)
           } else {

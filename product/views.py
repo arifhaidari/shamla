@@ -80,7 +80,6 @@ class ProductDetailView(DetailView):
                    print('i ma in the else')
                    context['related_products'] = Product.objects.all().exclude(id=product_object.id).order_by('-id')[:10]
                    
-                   
           except:
               pass
           return context
